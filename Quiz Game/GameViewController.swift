@@ -158,7 +158,7 @@ class GameViewController: UIViewController {
                 questionLabel.font = .boldSystemFont(ofSize: 32)
             }
             else{
-                questionLabel.text = "Unable to fetch Questions"
+                questionLabel.text = "Unable to fetch Questions\nPlease Try Again!"
                 questionLabel.textAlignment = .center
             }
         }

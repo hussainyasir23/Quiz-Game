@@ -7,7 +7,7 @@
 
 import UIKit
 
-class NewGameViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
+class NewGameViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate, DismissDelegate {
     
     let number = [10, 20, 30, 40, 50]
     let difficulty = ["Easy", "Medium", "Hard"]
@@ -90,6 +90,7 @@ class NewGameViewController: UIViewController, UIPickerViewDataSource, UIPickerV
         startButton.setTitle("Start!", for: .normal)
         startButton.backgroundColor = #colorLiteral(red: 0.4431372549, green: 0.7882352941, blue: 0.8078431373, alpha: 1)
         startButton.translatesAutoresizingMaskIntoConstraints = false
+        startButton.layer.cornerRadius = 10.0
         startButton.heightAnchor.constraint(equalTo: startButton.widthAnchor, multiplier: 0.2).isActive = true
         startButton.addTarget(self, action: #selector(startTapped), for: .touchUpInside)
     }
@@ -103,7 +104,10 @@ class NewGameViewController: UIViewController, UIPickerViewDataSource, UIPickerV
         
         let gameController = GameViewController()
         gameController.url = URL(string: apiLink)
-        navigationController?.pushViewController(gameController, animated: true)
+        gameController.modalPresentationStyle = .fullScreen
+        gameController.modalTransitionStyle = .coverVertical
+        gameController.delegate = self
+        navigationController?.present(gameController, animated: true, completion: nil)
     }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
@@ -144,5 +148,9 @@ class NewGameViewController: UIViewController, UIPickerViewDataSource, UIPickerV
         else{
             selectedCategory = row
         }
+    }
+    
+    func didDismiss() {
+        self.navigationController?.popToRootViewController(animated: true)
     }
 }

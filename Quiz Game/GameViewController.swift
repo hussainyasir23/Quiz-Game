@@ -15,78 +15,84 @@ class GameViewController: UIViewController {
     var currQuesNum = -1
     var currScore = 0
     
-    var scoreLabel = UILabel()
+    let gameView = UIView()
+    
+    var currScoreLabel = UILabel()
     var questionLabel = UILabel()
     let trueButton = UIButton()
     let falseButton = UIButton()
     var progBar = UIProgressView()
+    
+    let postGame = UIView()
+    
+    let scoreLabel = UILabel()
+    let checkAnswer = UIButton()
+    let homeButton = UIButton()
+    
+    weak var delegate: DismissDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
         
-        let task = session.dataTask(with: url!) { data, response, error in
-            if error != nil || data == nil {
-                print("Client error!")
-                return
-            }
-            do {
-                //let json = try JSONSerialization.jsonObject(with: data!, options: [])
-                self.input = try! JSONDecoder().decode(Question.self, from: data!)
-                //print(self.input.results.count)
-                //print(json)
-            } catch {
-                print("JSON error: \(error.localizedDescription)")
-            }
-        }
-        
-        task.resume()
-        
+        parse(url: url!)
         
         setViews()
         setConstraints()
-        
-        Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(updateUI), userInfo: nil, repeats: false)
     }
     
     func setViews(){
         
-        view.addSubview(scoreLabel)
-        view.addSubview(questionLabel)
-        view.addSubview(trueButton)
-        view.addSubview(falseButton)
-        view.addSubview(progBar)
+        view.addSubview(gameView)
+        
+        gameView.addSubview(currScoreLabel)
+        gameView.addSubview(questionLabel)
+        gameView.addSubview(progBar)
+        gameView.addSubview(trueButton)
+        gameView.addSubview(falseButton)
+        
+        postGame.addSubview(scoreLabel)
+        postGame.addSubview(checkAnswer)
+        postGame.addSubview(homeButton)
     }
     
     func setConstraints(){
         
         view.backgroundColor = #colorLiteral(red: 0.6509803922, green: 0.8901960784, blue: 0.9137254902, alpha: 1)
         
-        scoreLabel.text = "Score: \(currScore)"
-        scoreLabel.font = .boldSystemFont(ofSize: 24)
-        scoreLabel.textAlignment = .center
-        scoreLabel.backgroundColor = #colorLiteral(red: 0.4431372549, green: 0.7882352941, blue: 0.8078431373, alpha: 1)
-        scoreLabel.translatesAutoresizingMaskIntoConstraints = false
-        scoreLabel.heightAnchor.constraint(equalTo: scoreLabel.widthAnchor, multiplier: 0.2).isActive = true
-        scoreLabel.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 32).isActive = true
-        scoreLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8).isActive = true
-        scoreLabel.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -32).isActive = true
+        gameView.translatesAutoresizingMaskIntoConstraints = false
+        gameView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
+        gameView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        gameView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
+        gameView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        
+        currScoreLabel.text = "Score: \(currScore)"
+        currScoreLabel.font = .boldSystemFont(ofSize: 24)
+        currScoreLabel.textAlignment = .center
+        currScoreLabel.backgroundColor = #colorLiteral(red: 0.4431372549, green: 0.7882352941, blue: 0.8078431373, alpha: 1)
+        currScoreLabel.translatesAutoresizingMaskIntoConstraints = false
+        currScoreLabel.layer.cornerRadius = 10.0
+        currScoreLabel.layer.masksToBounds = true
+        currScoreLabel.heightAnchor.constraint(equalTo: currScoreLabel.widthAnchor, multiplier: 0.2).isActive = true
+        currScoreLabel.leftAnchor.constraint(equalTo: gameView.leftAnchor, constant: 32).isActive = true
+        currScoreLabel.topAnchor.constraint(equalTo: gameView.topAnchor, constant: 8).isActive = true
+        currScoreLabel.rightAnchor.constraint(equalTo: gameView.rightAnchor, constant: -32).isActive = true
         
         progBar.backgroundColor = #colorLiteral(red: 0.4431372549, green: 0.7882352941, blue: 0.8078431373, alpha: 1)
         progBar.translatesAutoresizingMaskIntoConstraints = false
-        progBar.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 32).isActive = true
-        progBar.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -32).isActive = true
-        progBar.topAnchor.constraint(equalTo: scoreLabel.bottomAnchor, constant: 16).isActive = true
+        progBar.leftAnchor.constraint(equalTo: gameView.leftAnchor, constant: 32).isActive = true
+        progBar.rightAnchor.constraint(equalTo: gameView.rightAnchor, constant: -32).isActive = true
+        progBar.topAnchor.constraint(equalTo: currScoreLabel.bottomAnchor, constant: 16).isActive = true
         
-        questionLabel.text = "Loading your question ..."
+        questionLabel.text = "Loading your questions ..."
         questionLabel.numberOfLines = 0
-        questionLabel.font = .systemFont(ofSize: 24)
-        questionLabel.textAlignment = .left
+        questionLabel.font = .boldSystemFont(ofSize: 24)
+        questionLabel.textAlignment = .center
         questionLabel.translatesAutoresizingMaskIntoConstraints = false
-        questionLabel.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 32).isActive = true
+        questionLabel.leftAnchor.constraint(equalTo: gameView.leftAnchor, constant: 32).isActive = true
         questionLabel.topAnchor.constraint(equalTo: progBar.bottomAnchor, constant: 16).isActive = true
-        questionLabel.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -32).isActive = true
+        questionLabel.rightAnchor.constraint(equalTo: gameView.rightAnchor, constant: -32).isActive = true
         questionLabel.bottomAnchor.constraint(equalTo: trueButton.topAnchor, constant: -16).isActive = true
         
         trueButton.titleLabel?.font = .boldSystemFont(ofSize: 22)
@@ -95,11 +101,12 @@ class GameViewController: UIViewController {
         trueButton.setTitle("True", for: .normal)
         trueButton.backgroundColor = #colorLiteral(red: 0.4431372549, green: 0.7882352941, blue: 0.8078431373, alpha: 1)
         trueButton.translatesAutoresizingMaskIntoConstraints = false
+        trueButton.layer.cornerRadius = 10.0
         trueButton.heightAnchor.constraint(equalTo: trueButton.widthAnchor, multiplier: 0.2).isActive = true
-        trueButton.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 32).isActive = true
-        trueButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -32).isActive = true
+        trueButton.leftAnchor.constraint(equalTo: gameView.leftAnchor, constant: 32).isActive = true
+        trueButton.rightAnchor.constraint(equalTo: gameView.rightAnchor, constant: -32).isActive = true
         trueButton.bottomAnchor.constraint(equalTo: falseButton.topAnchor, constant: -8).isActive = true
-        trueButton.addTarget(self, action: #selector(truePressed), for: .touchUpInside)
+        trueButton.addTarget(self, action: #selector(answerPressed), for: .touchUpInside)
         
         falseButton.titleLabel?.font = .boldSystemFont(ofSize: 22)
         falseButton.titleLabel?.textAlignment = .center
@@ -107,33 +114,113 @@ class GameViewController: UIViewController {
         falseButton.setTitle("False", for: .normal)
         falseButton.backgroundColor = #colorLiteral(red: 0.4431372549, green: 0.7882352941, blue: 0.8078431373, alpha: 1)
         falseButton.translatesAutoresizingMaskIntoConstraints = false
+        falseButton.layer.cornerRadius = 10.0
         falseButton.heightAnchor.constraint(equalTo: trueButton.widthAnchor, multiplier: 0.2).isActive = true
-        falseButton.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 32).isActive = true
-        falseButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -32).isActive = true
-        falseButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8).isActive = true
-        falseButton.addTarget(self, action: #selector(falsePressed), for: .touchUpInside)
+        falseButton.leftAnchor.constraint(equalTo: gameView.leftAnchor, constant: 32).isActive = true
+        falseButton.rightAnchor.constraint(equalTo: gameView.rightAnchor, constant: -32).isActive = true
+        falseButton.bottomAnchor.constraint(equalTo: gameView.bottomAnchor, constant: -8).isActive = true
+        falseButton.addTarget(self, action: #selector(answerPressed), for: .touchUpInside)
+        
+        currScoreLabel.isHidden = true
+        progBar.isHidden = true
+        trueButton.isHidden = true
+        falseButton.isHidden = true
     }
     
-    @objc func truePressed(){
-        if trueButton.currentTitle == input.results[currQuesNum].correct_answer {
+    
+    func setPostGameConstraints(){
+        
+        postGame.translatesAutoresizingMaskIntoConstraints = false
+        postGame.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
+        postGame.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        postGame.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
+        postGame.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        
+        scoreLabel.text = "Score: \(currScore)"
+        scoreLabel.font = .boldSystemFont(ofSize: 32)
+        scoreLabel.textAlignment = .center
+        //scoreLabel.backgroundColor = #colorLiteral(red: 0.4431372549, green: 0.7882352941, blue: 0.8078431373, alpha: 1)
+        scoreLabel.translatesAutoresizingMaskIntoConstraints = false
+        scoreLabel.layer.cornerRadius = 10.0
+        scoreLabel.layer.masksToBounds = true
+        scoreLabel.heightAnchor.constraint(equalTo: scoreLabel.widthAnchor, multiplier: 0.4).isActive = true
+        scoreLabel.leftAnchor.constraint(equalTo: postGame.leftAnchor, constant: 32).isActive = true
+        scoreLabel.bottomAnchor.constraint(equalTo: postGame.centerYAnchor, constant: 16).isActive = true
+        scoreLabel.rightAnchor.constraint(equalTo: postGame.rightAnchor, constant: -32).isActive = true
+        
+        checkAnswer.titleLabel?.font = .boldSystemFont(ofSize: 22)
+        checkAnswer.titleLabel?.textAlignment = .center
+        checkAnswer.setTitleColor(.black, for: .normal)
+        checkAnswer.setTitle("View Quiz Results", for: .normal)
+        checkAnswer.backgroundColor = #colorLiteral(red: 0.4431372549, green: 0.7882352941, blue: 0.8078431373, alpha: 1)
+        checkAnswer.translatesAutoresizingMaskIntoConstraints = false
+        checkAnswer.layer.cornerRadius = 10.0
+        checkAnswer.heightAnchor.constraint(equalTo: checkAnswer.widthAnchor, multiplier: 0.2).isActive = true
+        checkAnswer.leftAnchor.constraint(equalTo: postGame.leftAnchor, constant: 32).isActive = true
+        checkAnswer.topAnchor.constraint(equalTo: scoreLabel.bottomAnchor, constant: 16).isActive = true
+        checkAnswer.rightAnchor.constraint(equalTo: postGame.rightAnchor, constant: -32).isActive = true
+        checkAnswer.addTarget(self, action: #selector(ResultPressed), for: .touchUpInside)
+        
+        homeButton.titleLabel?.font = .boldSystemFont(ofSize: 22)
+        homeButton.titleLabel?.textAlignment = .center
+        homeButton.setTitleColor(.black, for: .normal)
+        homeButton.setTitle("Home", for: .normal)
+        homeButton.backgroundColor = #colorLiteral(red: 0.4431372549, green: 0.7882352941, blue: 0.8078431373, alpha: 1)
+        homeButton.translatesAutoresizingMaskIntoConstraints = false
+        homeButton.layer.cornerRadius = 10.0
+        homeButton.heightAnchor.constraint(equalTo: homeButton.widthAnchor, multiplier: 0.2).isActive = true
+        homeButton.leftAnchor.constraint(equalTo: postGame.leftAnchor, constant: 32).isActive = true
+        homeButton.topAnchor.constraint(equalTo: checkAnswer.bottomAnchor, constant: 16).isActive = true
+        homeButton.rightAnchor.constraint(equalTo: postGame.rightAnchor, constant: -32).isActive = true
+        homeButton.addTarget(self, action: #selector(HomePressed), for: .touchUpInside)
+    }
+    
+    func parse (url: URL){
+        URLSession.shared.dataTask(with: url) { (data, res, error) in
+            if error != nil || data == nil {
+                print("Client error!")
+                return
+            }
+            do {
+                self.input = try JSONDecoder().decode(Question.self, from: data!)
+                DispatchQueue.main.async {
+                    self.startGame()
+                }
+            } catch {
+                print("didnt work")
+            }
+        }.resume()
+    }
+    
+    @objc func answerPressed(sender: UIButton!){
+        if sender.currentTitle == input.results[currQuesNum].correct_answer {
             currScore += 1
-            trueButton.backgroundColor = .green
+            sender.backgroundColor = .green
         }
         else{
-            trueButton.backgroundColor = .red
+            sender.backgroundColor = .red
         }
         Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(updateUI), userInfo: nil, repeats: false)
     }
     
-    @objc func falsePressed(){
-        if falseButton.currentTitle == input.results[currQuesNum].correct_answer {
-            currScore += 1
-            falseButton.backgroundColor = .green
+    @objc func startGame(){
+        if(input.response_code != 0){
+            questionLabel.text = "Unable to fetch questions.\nPlease try after some time."
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                self.dismiss(animated: true){
+                    self.delegate?.didDismiss()
+                }
+            }
         }
         else{
-            falseButton.backgroundColor = .red
+            currScoreLabel.isHidden = false
+            progBar.isHidden = false
+            trueButton.isHidden = false
+            falseButton.isHidden = false
+            questionLabel.textAlignment = .left
+            questionLabel.font = .systemFont(ofSize: 24)
+            updateUI()
         }
-        Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(updateUI), userInfo: nil, repeats: false)
     }
     
     @objc func updateUI(){
@@ -141,26 +228,26 @@ class GameViewController: UIViewController {
         trueButton.backgroundColor = #colorLiteral(red: 0.4431372549, green: 0.7882352941, blue: 0.8078431373, alpha: 1)
         falseButton.backgroundColor = #colorLiteral(red: 0.4431372549, green: 0.7882352941, blue: 0.8078431373, alpha: 1)
         if(currQuesNum < input.results.count){
-            scoreLabel.text = "Score: \(currScore)"
+            currScoreLabel.text = "Score: \(currScore)"
             progBar.setProgress(Float(currQuesNum + 1)/Float(input.results.count), animated: true)
             questionLabel.text = input.results[currQuesNum].question
+            //print(input.results[currQuesNum])
             //print("Q\(currQuesNum):\t\(input.results[currQuesNum].question)")
-            
         }
         else if currQuesNum >= input.results.count{
-            scoreLabel.isHidden = true
-            progBar.isHidden = true
-            trueButton.isHidden = true
-            falseButton.isHidden = true
-            if input.response_code != 1{
-                questionLabel.text = "Score: \(currScore)"
-                questionLabel.textAlignment = .center
-                questionLabel.font = .boldSystemFont(ofSize: 32)
-            }
-            else{
-                questionLabel.text = "Unable to fetch Questions\nPlease Try Again!"
-                questionLabel.textAlignment = .center
-            }
+            gameView.removeFromSuperview()
+            view.addSubview(postGame)
+            setPostGameConstraints()
         }
+    }
+    
+    @objc func ResultPressed(){
+        
+    }
+    
+    @objc func HomePressed(){
+        self.dismiss(animated: true,completion: {
+            self.delegate?.didDismiss()
+            self.navigationController?.popViewController(animated: true)        })
     }
 }

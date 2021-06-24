@@ -41,6 +41,8 @@ class HomeViewController: UIViewController {
         highScoreLabel.textAlignment = .center
         highScoreLabel.backgroundColor = #colorLiteral(red: 0.4431372549, green: 0.7882352941, blue: 0.8078431373, alpha: 1)
         highScoreLabel.translatesAutoresizingMaskIntoConstraints = false
+        highScoreLabel.layer.cornerRadius = 10.0
+        highScoreLabel.layer.masksToBounds = true
         highScoreLabel.heightAnchor.constraint(equalTo: highScoreLabel.widthAnchor, multiplier: 0.25).isActive = true
         highScoreLabel.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 32).isActive = true
         highScoreLabel.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -32).isActive = true
@@ -52,6 +54,7 @@ class HomeViewController: UIViewController {
         newGameButton.setTitle("New Game!", for: .normal)
         newGameButton.backgroundColor = #colorLiteral(red: 0.4431372549, green: 0.7882352941, blue: 0.8078431373, alpha: 1)
         newGameButton.translatesAutoresizingMaskIntoConstraints = false
+        newGameButton.layer.cornerRadius = 10.0
         newGameButton.heightAnchor.constraint(equalTo: newGameButton.widthAnchor, multiplier: 0.25).isActive = true
         newGameButton.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 32).isActive = true
         newGameButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor, constant: 16).isActive = true
@@ -63,5 +66,4 @@ class HomeViewController: UIViewController {
         
         navigationController?.pushViewController(NewGameViewController(), animated: true)
     }
-    
 }

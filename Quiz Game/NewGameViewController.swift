@@ -104,10 +104,11 @@ class NewGameViewController: UIViewController, UIPickerViewDataSource, UIPickerV
         
         let gameController = GameViewController()
         gameController.url = URL(string: apiLink)
-        gameController.modalPresentationStyle = .fullScreen
-        gameController.modalTransitionStyle = .coverVertical
-        gameController.delegate = self
-        navigationController?.present(gameController, animated: true, completion: nil)
+        gameController.dismissDelegate = self
+        let x = UINavigationController(rootViewController: gameController)
+        x.modalPresentationStyle = .fullScreen
+        x.modalTransitionStyle = .coverVertical
+        navigationController?.present(x, animated: true, completion: nil)
     }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {

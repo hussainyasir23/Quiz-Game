@@ -14,6 +14,7 @@ class GameViewController: UIViewController {
     var input = Question()
     var currQuesNum = -1
     var currScore = 0
+    var answers = [String]()
     
     let gameView = UIView()
     
@@ -29,7 +30,7 @@ class GameViewController: UIViewController {
     let checkAnswer = UIButton()
     let homeButton = UIButton()
     
-    weak var delegate: DismissDelegate?
+    weak var dismissDelegate: DismissDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,6 +56,9 @@ class GameViewController: UIViewController {
         postGame.addSubview(scoreLabel)
         postGame.addSubview(checkAnswer)
         postGame.addSubview(homeButton)
+        
+        navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.6509803922, green: 0.8901960784, blue: 0.9137254902, alpha: 1)
+        navigationController?.navigationBar.isHidden = true
     }
     
     func setConstraints(){
@@ -193,6 +197,7 @@ class GameViewController: UIViewController {
     }
     
     @objc func answerPressed(sender: UIButton!){
+        answers.append(sender.currentTitle!)
         if sender.currentTitle == input.results[currQuesNum].correct_answer {
             currScore += 1
             sender.backgroundColor = .green
@@ -208,7 +213,7 @@ class GameViewController: UIViewController {
             questionLabel.text = "Unable to fetch questions.\nPlease try after some time."
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                 self.dismiss(animated: true){
-                    self.delegate?.didDismiss()
+                    self.dismissDelegate?.didDismiss()
                 }
             }
         }
@@ -242,12 +247,16 @@ class GameViewController: UIViewController {
     }
     
     @objc func ResultPressed(){
+        let resultView = ResultViewController()
+        resultView.question = input
+        resultView.answers = self.answers
+        navigationController?.pushViewController(resultView, animated: true)
         
     }
     
     @objc func HomePressed(){
         self.dismiss(animated: true,completion: {
-            self.delegate?.didDismiss()
-            self.navigationController?.popViewController(animated: true)        })
+            self.dismissDelegate?.didDismiss()
+        })
     }
 }

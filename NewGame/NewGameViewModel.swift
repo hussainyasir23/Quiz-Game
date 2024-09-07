@@ -13,8 +13,8 @@ class NewGameViewModel: ObservableObject {
     @Published var categories: [Category] = Category.allCases
     @Published var difficulties: [Difficulty] = Difficulty.allCases
     @Published var questionTypes: [QuestionType] = QuestionType.allCases
-    @Published var questionCountsMin: Int = 5
-    @Published var questionCountsMax: Int = 10
+    @Published var questionCountsMin: Int = 1
+    @Published var questionCountsMax: Int = 50
     
     @Published var selectedCategory: Category = .any
     @Published var selectedDifficulty: Difficulty = .any

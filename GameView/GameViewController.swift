@@ -41,6 +41,7 @@ class GameViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupAudio()
+        setupNavigation()
         bindViewModel()
         viewModel.startGame()
     }
@@ -70,7 +71,7 @@ class GameViewController: UIViewController {
     
     private func setupAnswerStackView() {
         answerStackView.axis = .vertical
-        answerStackView.spacing = 16
+        answerStackView.spacing = Styling.standardPadding / 1.5
         answerStackView.distribution = .fillEqually
     }
     
@@ -88,24 +89,24 @@ class GameViewController: UIViewController {
     
     private func setupProgressView() {
         progressView.progressTintColor = Styling.primaryColor
-        progressView.trackTintColor = Styling.primaryTextColor.withAlphaComponent(0.5)
+        progressView.trackTintColor = Styling.primaryTextColor.withAlphaComponent(0.25)
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            questionLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            questionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            questionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            questionLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Styling.standardPadding),
+            questionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Styling.standardPadding),
+            questionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Styling.standardPadding),
             
-            answerStackView.topAnchor.constraint(equalTo: questionLabel.bottomAnchor, constant: 20),
-            answerStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            answerStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            answerStackView.topAnchor.constraint(equalTo: questionLabel.bottomAnchor, constant: Styling.standardPadding),
+            answerStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Styling.standardPadding),
+            answerStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Styling.standardPadding),
             
-            scoreLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            scoreLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            scoreLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Styling.standardPadding),
+            scoreLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Styling.standardPadding),
             
-            timerLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            timerLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            timerLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Styling.standardPadding),
+            timerLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Styling.standardPadding),
             
             progressView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             progressView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -120,6 +121,26 @@ class GameViewController: UIViewController {
         } catch {
             print("Failed to set up audio session: \(error)")
         }
+    }
+    
+    private func setupNavigation() {
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+        navigationController?.interactivePopGestureRecognizer?.delegate = nil
+        navigationItem.hidesBackButton = true
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.left"), style: .plain, target: self, action: #selector(exitGameTapped))
+        navigationController?.navigationBar.tintColor = Styling.primaryTextColor
+    }
+    
+    @objc private func exitGameTapped() {
+        
+        let alert = UIAlertController(title: "Exit Game", message: "Are you sure you want to exit? Your progress will be lost.", preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Exit", style: .destructive, handler: { [weak self] _ in
+            self?.navigationController?.popToRootViewController(animated: true)
+        }))
+        
+        present(alert, animated: true, completion: nil)
     }
     
     private func bindViewModel() {
@@ -170,6 +191,13 @@ class GameViewController: UIViewController {
                 self.progressView.setProgress(progress, animated: true)
             }
             .store(in: &cancellables)
+        
+        viewModel.$isAnswerSelected
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isSelected in
+                self?.updateAnswerButtonsState(enabled: !isSelected)
+            }
+            .store(in: &cancellables)
     }
     
     
@@ -188,6 +216,16 @@ class GameViewController: UIViewController {
             Styling.styleButton(button)
             answerStackView.addArrangedSubview(button)
         }
+        
+        updateAnswerButtonsState(enabled: true)
+    }
+    
+    private func updateAnswerButtonsState(enabled: Bool) {
+        answerStackView.arrangedSubviews.forEach { view in
+            if let button = view as? UIButton {
+                button.isEnabled = enabled
+            }
+        }
     }
     
     @objc private func answerSelected(_ sender: UIButton) {
@@ -202,7 +240,7 @@ class GameViewController: UIViewController {
         }) { _ in
             UIView.animate(withDuration: 0.3) {
                 sender.transform = .identity
-                sender.backgroundColor = .systemGray5
+                sender.backgroundColor = Styling.primaryColor
             }
         }
         

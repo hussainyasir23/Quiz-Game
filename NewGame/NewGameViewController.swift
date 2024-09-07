@@ -157,7 +157,7 @@ class NewGameViewController: UIViewController {
     private func setupStartButton() {
         startButton.setTitle("Start Quiz", for: .normal)
         startButton.addTarget(self, action: #selector(startQuizTapped), for: .touchUpInside)
-        Styling.styleButton(startButton)
+        Styling.styleButton(startButton, isTitle: true)
     }
     
     private func bindViewModel() {

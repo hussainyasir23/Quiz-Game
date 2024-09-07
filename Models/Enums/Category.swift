@@ -34,9 +34,9 @@ enum Category: Int, CaseIterable {
     case animeManac = 31
     case cartoonAnimations = 32
     
-    var name: String {
+    var displayName: String {
         switch self {
-        case .any: return "Any Category"
+        case .any: return "Any"
         case .generalKnowledge: return "General Knowledge"
         case .books: return "Entertainment: Books"
         case .film: return "Entertainment: Film"

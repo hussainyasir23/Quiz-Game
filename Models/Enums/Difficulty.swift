@@ -15,7 +15,7 @@ enum Difficulty: String, CaseIterable {
     
     var displayName: String {
         switch self {
-        case .any: return "Any Difficulty"
+        case .any: return "Any"
         default: return rawValue.capitalized
         }
     }

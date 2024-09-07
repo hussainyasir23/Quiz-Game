@@ -14,7 +14,7 @@ enum QuestionType: String, CaseIterable {
     
     var displayName: String {
         switch self {
-        case .any: return "Any Type"
+        case .any: return "Any"
         case .multiple: return "Multiple Choice"
         case .boolean: return "True / False"
         }

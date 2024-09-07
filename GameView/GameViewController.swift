@@ -126,23 +126,31 @@ class GameViewController: UIViewController {
         navigationController?.interactivePopGestureRecognizer?.isEnabled = false
         navigationController?.interactivePopGestureRecognizer?.delegate = nil
         navigationItem.hidesBackButton = true
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.left"), style: .plain, target: self, action: #selector(exitGameTapped))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "chevron.left"),
+            style: .plain,
+            target: self,
+            action: #selector(exitGameTapped)
+        )
         navigationController?.navigationBar.tintColor = Styling.primaryTextColor
     }
     
     @objc private func exitGameTapped() {
-        
-        let alert = UIAlertController(title: "Exit Game", message: "Are you sure you want to exit? Your progress will be lost.", preferredStyle: .alert)
-        
+        let alert = UIAlertController(
+            title: "Exit Game",
+            message: "Are you sure you want to exit? Your progress will be lost.",
+            preferredStyle: .alert
+        )
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(title: "Exit", style: .destructive, handler: { [weak self] _ in
+        alert.addAction(UIAlertAction(title: "Exit", style: .destructive) {
+            [weak self] _ in
             self?.navigationController?.popToRootViewController(animated: true)
-        }))
-        
+        })
         present(alert, animated: true, completion: nil)
     }
     
     private func bindViewModel() {
+        
         viewModel.$currentQuestion
             .receive(on: DispatchQueue.main)
             .sink { [weak self] question in

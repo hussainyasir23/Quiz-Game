@@ -25,11 +25,6 @@ class HomeViewModel: ObservableObject {
         highScore = highScoreManager.getHighScore()
     }
     
-    func updateHighScore(_ score: Int) {
-        highScoreManager.setHighScore(score)
-        loadHighScore()
-    }
-    
     func createNewGameViewModel() -> NewGameViewModel {
         return NewGameViewModel(quizService: quizService)
     }

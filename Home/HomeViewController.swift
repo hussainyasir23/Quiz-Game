@@ -6,71 +6,85 @@
 //
 
 import UIKit
+import Combine
 
 class HomeViewController: UIViewController {
     
-    let defaults = UserDefaults.standard
+    private let viewModel: HomeViewModel
+    private var cancellables: Set<AnyCancellable> = []
     
-    var highScore = 0
+    private let highScoreLabel = UILabel()
+    private let newGameButton = UIButton()
     
-    let highScoreLabel = UILabel()
-    let newGameButton = UIButton()
-    let gradientLayer = CAGradientLayer()
+    init(viewModel: HomeViewModel = HomeViewModel()) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Do any additional setup after loading the view.
-        
-        setViews()
-        setConstraints()
+        setupViews()
+        setupConstraints()
+        bindViewModel()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        highScore = defaults.integer(forKey: "highScore")
-        highScoreLabel.text = "High Score: \(highScore)"
+        super.viewWillAppear(animated)
+        viewModel.loadHighScore()
     }
     
-    func setViews(){
-
+    private func setupViews() {
         view.addSubview(highScoreLabel)
         view.addSubview(newGameButton)
-    }
-    
-    func setConstraints(){
         
         view.backgroundColor = #colorLiteral(red: 0.6509803922, green: 0.8901960784, blue: 0.9137254902, alpha: 1)
-        navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.6509803922, green: 0.8901960784, blue: 0.9137254902, alpha: 1)
         navigationController?.navigationBar.isHidden = true
         
-        highScoreLabel.text = "High Score: \(highScore)"
         highScoreLabel.font = .boldSystemFont(ofSize: 24)
         highScoreLabel.textAlignment = .center
         highScoreLabel.backgroundColor = #colorLiteral(red: 0.4431372549, green: 0.7882352941, blue: 0.8078431373, alpha: 1)
-        highScoreLabel.translatesAutoresizingMaskIntoConstraints = false
         highScoreLabel.layer.cornerRadius = 10.0
         highScoreLabel.layer.masksToBounds = true
-        highScoreLabel.heightAnchor.constraint(equalTo: highScoreLabel.widthAnchor, multiplier: 0.25).isActive = true
-        highScoreLabel.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 32).isActive = true
-        highScoreLabel.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -32).isActive = true
-        highScoreLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor, constant: -16).isActive = true
         
         newGameButton.titleLabel?.font = .boldSystemFont(ofSize: 24)
-        newGameButton.titleLabel?.textAlignment = .center
         newGameButton.setTitleColor(.black, for: .normal)
         newGameButton.setTitle("New Game!", for: .normal)
         newGameButton.backgroundColor = #colorLiteral(red: 0.4431372549, green: 0.7882352941, blue: 0.8078431373, alpha: 1)
-        newGameButton.translatesAutoresizingMaskIntoConstraints = false
         newGameButton.layer.cornerRadius = 10.0
-        newGameButton.heightAnchor.constraint(equalTo: newGameButton.widthAnchor, multiplier: 0.25).isActive = true
-        newGameButton.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 32).isActive = true
-        newGameButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor, constant: 16).isActive = true
-        newGameButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -32).isActive = true
         newGameButton.addTarget(self, action: #selector(newGameTapped), for: .touchUpInside)
     }
     
-    @objc func newGameTapped(){
+    private func setupConstraints() {
+        highScoreLabel.translatesAutoresizingMaskIntoConstraints = false
+        newGameButton.translatesAutoresizingMaskIntoConstraints = false
         
-        navigationController?.pushViewController(NewGameViewController(), animated: true)
+        NSLayoutConstraint.activate([
+            highScoreLabel.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 32),
+            highScoreLabel.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -32),
+            highScoreLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor, constant: -16),
+            highScoreLabel.heightAnchor.constraint(equalTo: highScoreLabel.widthAnchor, multiplier: 0.25),
+            
+            newGameButton.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 32),
+            newGameButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -32),
+            newGameButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor, constant: 16),
+            newGameButton.heightAnchor.constraint(equalTo: newGameButton.widthAnchor, multiplier: 0.25)
+        ])
+    }
+    
+    private func bindViewModel() {
+        viewModel.$highScore
+            .sink { [weak self] highScore in
+                self?.highScoreLabel.text = "High Score: \(highScore)"
+            }
+            .store(in: &cancellables)
+    }
+    
+    @objc private func newGameTapped() {
+        let newGameViewController = NewGameViewController()
+        navigationController?.pushViewController(newGameViewController, animated: true)
     }
 }

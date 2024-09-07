@@ -8,7 +8,7 @@
 import Foundation
 
 enum Category: Int, CaseIterable {
-    case anyCategory = 0
+    case any = 0
     case generalKnowledge = 9
     case books = 10
     case film = 11
@@ -36,7 +36,7 @@ enum Category: Int, CaseIterable {
     
     var name: String {
         switch self {
-        case .anyCategory: return "Any Category"
+        case .any: return "Any Category"
         case .generalKnowledge: return "General Knowledge"
         case .books: return "Entertainment: Books"
         case .film: return "Entertainment: Film"

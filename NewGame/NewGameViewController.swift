@@ -11,15 +11,17 @@ import Combine
 class NewGameViewController: UIViewController {
     
     private let viewModel: NewGameViewModel
-    private var cancellables: Set<AnyCancellable> = []
+    private var cancellables = Set<AnyCancellable>()
+    
+    private let contentView = UIView()
+    private let activityIndicator = UIActivityIndicatorView(style: .large)
     
     private let difficultySegmentedControl = UISegmentedControl()
     private let typeSegmentedControl = UISegmentedControl()
     private let questionCountSlider = UISlider()
     private let questionCountLabel = UILabel()
-    private let categoryButton = UIButton()
-    private let startButton = UIButton()
-    private let activityIndicator = UIActivityIndicatorView(style: .large)
+    private let categoryButton = UIButton(type: .system)
+    private let startButton = UIButton(type: .system)
     
     init(viewModel: NewGameViewModel) {
         self.viewModel = viewModel
@@ -33,41 +35,85 @@ class NewGameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupNavigation()
         bindViewModel()
     }
     
     private func setupUI() {
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = Styling.primaryBackgroundColor
         title = "New Game Setup"
         
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.spacing = 20
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(stackView)
+        view.addSubview(contentView)
+        view.addSubview(activityIndicator)
         
-        [difficultySegmentedControl, typeSegmentedControl, questionCountSlider, questionCountLabel, categoryButton, startButton].forEach {
-            stackView.addArrangedSubview($0)
-        }
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
+            contentView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
         
+        setupStackView()
+        setupControls()
+    }
+    
+    private func setupNavigation() {
+        navigationController?.setNavigationBarHidden(false, animated: true)
+        navigationController?.interactivePopGestureRecognizer?.delegate = nil
+        navigationItem.hidesBackButton = true
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.left"), style: .plain, target: self, action: #selector(backTapped))
+        navigationController?.navigationBar.tintColor = Styling.primaryTextColor
+    }
+    
+    private func setupStackView() {
+        let stackView = UIStackView(arrangedSubviews: [
+            difficultySegmentedControl,
+            typeSegmentedControl,
+            questionCountSlider,
+            questionCountLabel,
+            categoryButton,
+            startButton
+        ])
+        stackView.axis = .vertical
+        stackView.spacing = Styling.standardPadding
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        contentView.addSubview(stackView)
+        
+        NSLayoutConstraint.activate([
+            stackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            stackView.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor, constant: Styling.standardPadding),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Styling.standardPadding),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Styling.standardPadding),
+            stackView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -Styling.standardPadding)
+        ])
+    }
+    
+    private func setupConstraints(for stackView: UIStackView) {
+        [stackView, activityIndicator].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Styling.standardPadding),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Styling.standardPadding),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Styling.standardPadding),
+            
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
+    
+    private func setupControls() {
         setupDifficultyControl()
         setupTypeControl()
         setupQuestionCountControl()
         setupCategoryButton()
         setupStartButton()
-        
-        view.addSubview(activityIndicator)
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
     }
     
     private func setupDifficultyControl() {
@@ -77,6 +123,7 @@ class NewGameViewController: UIViewController {
         }
         difficultySegmentedControl.selectedSegmentIndex = 0
         difficultySegmentedControl.addTarget(self, action: #selector(difficultyChanged), for: .valueChanged)
+        Styling.styleSegmentedControl(difficultySegmentedControl)
     }
     
     private func setupTypeControl() {
@@ -86,6 +133,7 @@ class NewGameViewController: UIViewController {
         }
         typeSegmentedControl.selectedSegmentIndex = 0
         typeSegmentedControl.addTarget(self, action: #selector(typeChanged), for: .valueChanged)
+        Styling.styleSegmentedControl(typeSegmentedControl)
     }
     
     private func setupQuestionCountControl() {
@@ -93,33 +141,36 @@ class NewGameViewController: UIViewController {
         questionCountSlider.maximumValue = Float(viewModel.questionCountsMax)
         questionCountSlider.value = Float(viewModel.selectedQuestionCount)
         questionCountSlider.addTarget(self, action: #selector(questionCountChanged), for: .valueChanged)
+        Styling.styleSlider(questionCountSlider)
         
         questionCountLabel.text = "Number of Questions: \(viewModel.selectedQuestionCount)"
         questionCountLabel.textAlignment = .center
+        Styling.styleLabel(questionCountLabel)
     }
     
     private func setupCategoryButton() {
         categoryButton.setTitle("Select Category", for: .normal)
-        categoryButton.setTitleColor(.systemBlue, for: .normal)
         categoryButton.addTarget(self, action: #selector(categoryTapped), for: .touchUpInside)
+        Styling.styleButton(categoryButton)
     }
     
     private func setupStartButton() {
         startButton.setTitle("Start Quiz", for: .normal)
-        startButton.setTitleColor(.white, for: .normal)
-        startButton.backgroundColor = .systemBlue
-        startButton.layer.cornerRadius = 10
-        startButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
         startButton.addTarget(self, action: #selector(startQuizTapped), for: .touchUpInside)
+        Styling.styleButton(startButton)
     }
     
     private func bindViewModel() {
         viewModel.$selectedCategory
             .receive(on: DispatchQueue.main)
             .sink { [weak self] category in
-                self?.categoryButton.setTitle(category.name, for: .normal)
+                self?.categoryButton.setTitle(category.displayName, for: .normal)
             }
             .store(in: &cancellables)
+    }
+    
+    @objc private func backTapped() {
+        navigationController?.popViewController(animated: true)
     }
     
     @objc private func difficultyChanged() {
@@ -146,12 +197,14 @@ class NewGameViewController: UIViewController {
     
     @objc private func startQuizTapped() {
         startButton.isEnabled = false
+        contentView.isHidden = true
         activityIndicator.startAnimating()
         viewModel.startQuiz()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 self?.startButton.isEnabled = true
                 self?.activityIndicator.stopAnimating()
+                self?.contentView.isHidden = false
                 switch completion {
                 case .finished:
                     break

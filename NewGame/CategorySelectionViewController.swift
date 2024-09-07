@@ -8,6 +8,7 @@
 import UIKit
 
 class CategorySelectionViewController: UITableViewController {
+    
     private let categories: [Category]
     private var selectedCategory: Category
     private let selectionCallback: (Category) -> Void
@@ -25,6 +26,11 @@ class CategorySelectionViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupUI()
+    }
+    
+    private func setupUI() {
+        view.backgroundColor = Styling.primaryBackgroundColor
         title = "Select Category"
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CategoryCell")
     }
@@ -36,9 +42,14 @@ class CategorySelectionViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
         let category = categories[indexPath.row]
-        cell.textLabel?.text = category.name
-        cell.accessoryType = category == selectedCategory ? .checkmark : .none
+        configureCell(cell, with: category)
         return cell
+    }
+    
+    private func configureCell(_ cell: UITableViewCell, with category: Category) {
+        cell.textLabel?.text = category.displayName
+        cell.accessoryType = category == selectedCategory ? .checkmark : .none
+        cell.backgroundColor = Styling.primaryBackgroundColor
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

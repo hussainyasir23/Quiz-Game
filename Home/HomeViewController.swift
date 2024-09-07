@@ -37,7 +37,7 @@ class HomeViewController: UIViewController {
     }
     
     private func setupViews() {
-        view.backgroundColor = Styling.backgroundColor
+        view.backgroundColor = Styling.primaryBackgroundColor
         navigationController?.setNavigationBarHidden(true, animated: false)
         
         [highScoreLabel, newGameButton].forEach {
@@ -54,16 +54,16 @@ class HomeViewController: UIViewController {
         highScoreLabel.font = Styling.titleFont
         highScoreLabel.textAlignment = .center
         highScoreLabel.backgroundColor = Styling.primaryColor
-        highScoreLabel.textColor = Styling.textColor
+        highScoreLabel.textColor = Styling.primaryTextColor
         highScoreLabel.layer.cornerRadius = Styling.cornerRadius
         highScoreLabel.layer.masksToBounds = true
     }
     
     private func setupNewGameButton() {
         newGameButton.titleLabel?.font = Styling.titleFont
-        newGameButton.setTitleColor(Styling.textColor, for: .normal)
+        newGameButton.setTitleColor(Styling.primaryTextColor, for: .normal)
         newGameButton.setTitle("New Game!", for: .normal)
-        Styling.styleButton(newGameButton)
+        Styling.styleButton(newGameButton, isTitle: true)
         newGameButton.addTarget(self, action: #selector(newGameTapped), for: .touchUpInside)
     }
     

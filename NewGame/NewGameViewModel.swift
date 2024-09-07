@@ -22,7 +22,6 @@ class NewGameViewModel: ObservableObject {
     @Published var selectedQuestionCount: Int = 10
     
     private let quizService: QuizServiceProtocol
-    private var cancellables: Set<AnyCancellable> = []
     
     init(quizService: QuizServiceProtocol = QuizService()) {
         self.quizService = quizService

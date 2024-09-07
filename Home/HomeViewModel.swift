@@ -10,30 +10,24 @@ import Combine
 
 class HomeViewModel: ObservableObject {
     
-    @Published var highScore: Int = 0
-    @Published var categories: [Category] = Category.allCases
-    @Published var difficulties: [Difficulty] = Difficulty.allCases
-    @Published var questionTypes: [QuestionType] = QuestionType.allCases
+    @Published private(set) var highScore: Int = 0
     
-    private let userDefaults: UserDefaults
+    private let highScoreManager: HighScoreManager
     private let quizService: QuizServiceProtocol
-    private var cancellables: Set<AnyCancellable> = []
     
-    init(userDefaults: UserDefaults = .standard, quizService: QuizServiceProtocol = QuizService()) {
-        self.userDefaults = userDefaults
+    init(highScoreManager: HighScoreManager = .shared, quizService: QuizServiceProtocol = QuizService()) {
+        self.highScoreManager = highScoreManager
         self.quizService = quizService
         loadHighScore()
     }
     
     func loadHighScore() {
-        highScore = userDefaults.integer(forKey: "highScore")
+        highScore = highScoreManager.getHighScore()
     }
     
     func updateHighScore(_ score: Int) {
-        if score > highScore {
-            highScore = score
-            userDefaults.set(highScore, forKey: "highScore")
-        }
+        highScoreManager.setHighScore(score)
+        loadHighScore()
     }
     
     func createNewGameViewModel() -> NewGameViewModel {

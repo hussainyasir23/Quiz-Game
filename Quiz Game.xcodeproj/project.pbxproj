@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		5417CC38268494DB000B6A2E /* DismissDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5417CC37268494DB000B6A2E /* DismissDelegate.swift */; };
 		5417CC3A2685908A000B6A2E /* ResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5417CC392685908A000B6A2E /* ResultViewController.swift */; };
+		548B586C2C8C43CB0094488B /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B586B2C8C43CB0094488B /* HomeViewModel.swift */; };
+		548B586E2C8C445D0094488B /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B586D2C8C445D0094488B /* Constants.swift */; };
 		54EBF7622680AC1600A77A5E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EBF7612680AC1600A77A5E /* AppDelegate.swift */; };
 		54EBF7642680AC1600A77A5E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EBF7632680AC1600A77A5E /* SceneDelegate.swift */; };
 		54EBF76B2680AC1B00A77A5E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 54EBF76A2680AC1B00A77A5E /* Assets.xcassets */; };
@@ -22,6 +24,8 @@
 /* Begin PBXFileReference section */
 		5417CC37268494DB000B6A2E /* DismissDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DismissDelegate.swift; sourceTree = "<group>"; };
 		5417CC392685908A000B6A2E /* ResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultViewController.swift; sourceTree = "<group>"; };
+		548B586B2C8C43CB0094488B /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		548B586D2C8C445D0094488B /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		54EBF75E2680AC1600A77A5E /* Quiz Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Quiz Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		54EBF7612680AC1600A77A5E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		54EBF7632680AC1600A77A5E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -45,9 +49,38 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		548B58692C8C43A40094488B /* AppDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				54EBF7612680AC1600A77A5E /* AppDelegate.swift */,
+				54EBF7632680AC1600A77A5E /* SceneDelegate.swift */,
+			);
+			path = AppDelegate;
+			sourceTree = "<group>";
+		};
+		548B586A2C8C43BA0094488B /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				548B586B2C8C43CB0094488B /* HomeViewModel.swift */,
+				54EBF7752680ACAD00A77A5E /* HomeViewController.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		548B58712C8C46650094488B /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				548B586D2C8C445D0094488B /* Constants.swift */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
 		54EBF7552680AC1600A77A5E = {
 			isa = PBXGroup;
 			children = (
+				548B58712C8C46650094488B /* Constants */,
+				548B586A2C8C43BA0094488B /* Home */,
+				548B58692C8C43A40094488B /* AppDelegate */,
 				54EBF7602680AC1600A77A5E /* Quiz Game */,
 				54EBF75F2680AC1600A77A5E /* Products */,
 			);
@@ -64,9 +97,6 @@
 		54EBF7602680AC1600A77A5E /* Quiz Game */ = {
 			isa = PBXGroup;
 			children = (
-				54EBF7612680AC1600A77A5E /* AppDelegate.swift */,
-				54EBF7632680AC1600A77A5E /* SceneDelegate.swift */,
-				54EBF7752680ACAD00A77A5E /* HomeViewController.swift */,
 				54EBF7772681B19200A77A5E /* NewGameViewController.swift */,
 				54EBF7792681D23000A77A5E /* GameViewController.swift */,
 				5417CC392685908A000B6A2E /* ResultViewController.swift */,
@@ -149,9 +179,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				54EBF77A2681D23000A77A5E /* GameViewController.swift in Sources */,
+				548B586C2C8C43CB0094488B /* HomeViewModel.swift in Sources */,
 				5417CC38268494DB000B6A2E /* DismissDelegate.swift in Sources */,
 				54EBF7622680AC1600A77A5E /* AppDelegate.swift in Sources */,
 				5417CC3A2685908A000B6A2E /* ResultViewController.swift in Sources */,
+				548B586E2C8C445D0094488B /* Constants.swift in Sources */,
 				54EBF7782681B19200A77A5E /* NewGameViewController.swift in Sources */,
 				54EBF7802681FA5C00A77A5E /* Question.swift in Sources */,
 				54EBF7642680AC1600A77A5E /* SceneDelegate.swift in Sources */,

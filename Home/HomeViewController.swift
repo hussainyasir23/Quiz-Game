@@ -11,10 +11,10 @@ import Combine
 class HomeViewController: UIViewController {
     
     private let viewModel: HomeViewModel
-    private var cancellables: Set<AnyCancellable> = []
+    private var cancellables = Set<AnyCancellable>()
     
     private let highScoreLabel = UILabel()
-    private let newGameButton = UIButton()
+    private let newGameButton = UIButton(type: .system)
     
     init(viewModel: HomeViewModel = HomeViewModel()) {
         self.viewModel = viewModel
@@ -28,7 +28,6 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
-        setupConstraints()
         bindViewModel()
     }
     
@@ -38,45 +37,53 @@ class HomeViewController: UIViewController {
     }
     
     private func setupViews() {
-        view.addSubview(highScoreLabel)
-        view.addSubview(newGameButton)
+        view.backgroundColor = Styling.backgroundColor
+        navigationController?.setNavigationBarHidden(true, animated: false)
         
-        view.backgroundColor = #colorLiteral(red: 0.6509803922, green: 0.8901960784, blue: 0.9137254902, alpha: 1)
-        navigationController?.navigationBar.isHidden = true
+        [highScoreLabel, newGameButton].forEach {
+            view.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         
-        highScoreLabel.font = .boldSystemFont(ofSize: 24)
+        setupHighScoreLabel()
+        setupNewGameButton()
+        setupConstraints()
+    }
+    
+    private func setupHighScoreLabel() {
+        highScoreLabel.font = Styling.titleFont
         highScoreLabel.textAlignment = .center
-        highScoreLabel.backgroundColor = #colorLiteral(red: 0.4431372549, green: 0.7882352941, blue: 0.8078431373, alpha: 1)
-        highScoreLabel.layer.cornerRadius = 10.0
+        highScoreLabel.backgroundColor = Styling.primaryColor
+        highScoreLabel.textColor = Styling.textColor
+        highScoreLabel.layer.cornerRadius = Styling.cornerRadius
         highScoreLabel.layer.masksToBounds = true
-        
-        newGameButton.titleLabel?.font = .boldSystemFont(ofSize: 24)
-        newGameButton.setTitleColor(.black, for: .normal)
+    }
+    
+    private func setupNewGameButton() {
+        newGameButton.titleLabel?.font = Styling.titleFont
+        newGameButton.setTitleColor(Styling.textColor, for: .normal)
         newGameButton.setTitle("New Game!", for: .normal)
-        newGameButton.backgroundColor = #colorLiteral(red: 0.4431372549, green: 0.7882352941, blue: 0.8078431373, alpha: 1)
-        newGameButton.layer.cornerRadius = 10.0
+        Styling.styleButton(newGameButton)
         newGameButton.addTarget(self, action: #selector(newGameTapped), for: .touchUpInside)
     }
     
     private func setupConstraints() {
-        highScoreLabel.translatesAutoresizingMaskIntoConstraints = false
-        newGameButton.translatesAutoresizingMaskIntoConstraints = false
-        
         NSLayoutConstraint.activate([
-            highScoreLabel.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 32),
-            highScoreLabel.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -32),
-            highScoreLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor, constant: -16),
+            highScoreLabel.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: Styling.standardPadding),
+            highScoreLabel.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -Styling.standardPadding),
+            highScoreLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor, constant: -Styling.standardPadding / 2),
             highScoreLabel.heightAnchor.constraint(equalTo: highScoreLabel.widthAnchor, multiplier: 0.25),
             
-            newGameButton.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 32),
-            newGameButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -32),
-            newGameButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor, constant: 16),
+            newGameButton.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: Styling.standardPadding),
+            newGameButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -Styling.standardPadding),
+            newGameButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor, constant: Styling.standardPadding / 2),
             newGameButton.heightAnchor.constraint(equalTo: newGameButton.widthAnchor, multiplier: 0.25)
         ])
     }
     
     private func bindViewModel() {
         viewModel.$highScore
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] highScore in
                 self?.highScoreLabel.text = "High Score: \(highScore)"
             }

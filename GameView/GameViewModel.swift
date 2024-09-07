@@ -16,7 +16,6 @@ class GameViewModel: ObservableObject {
     @Published private(set) var isGameOver: Bool = false
     @Published private(set) var timeRemaining: Int = 15
     @Published private(set) var shouldPlayTimerSound: Bool = false
-    @Published private(set) var isAnswerSelected: Bool = false
     
     private var quiz: Quiz
     private var timer: AnyCancellable?
@@ -38,7 +37,6 @@ class GameViewModel: ObservableObject {
         isGameOver = false
         timeRemaining = 15
         shouldPlayTimerSound = false
-        isAnswerSelected = false
         setNextQuestion()
     }
     
@@ -62,7 +60,6 @@ class GameViewModel: ObservableObject {
     
     func answerSelected(_ answer: String?) {
         timer?.cancel()
-        isAnswerSelected = true
         if let currentQuestion = currentQuestion,
            answer == currentQuestion.correctAnswer {
             score += 1
@@ -78,7 +75,6 @@ class GameViewModel: ObservableObject {
             currentQuestion = quiz.questions[currentQuestionIndex]
             timeRemaining = 15
             shouldPlayTimerSound = false
-            isAnswerSelected = false
             startTimer()
         } else {
             endGame()

@@ -179,6 +179,9 @@ class GameViewController: UIViewController {
             .sink { [weak self] shouldPlay in
                 if shouldPlay {
                     self?.playSound(.timerTick)
+                    self?.timerLabel.textColor = .red
+                } else {
+                    self?.timerLabel.textColor = Styling.primaryTextColor
                 }
             }
             .store(in: &cancellables)
@@ -189,13 +192,6 @@ class GameViewController: UIViewController {
                 guard let self = self else { return }
                 let progress = Float(index) / Float(self.viewModel.totalQuestions)
                 self.progressView.setProgress(progress, animated: true)
-            }
-            .store(in: &cancellables)
-        
-        viewModel.$isAnswerSelected
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] isSelected in
-                self?.updateAnswerButtonsState(enabled: !isSelected)
             }
             .store(in: &cancellables)
     }
@@ -214,10 +210,23 @@ class GameViewController: UIViewController {
             button.setTitle(answer, for: .normal)
             button.addTarget(self, action: #selector(answerSelected(_:)), for: .touchUpInside)
             Styling.styleButton(button)
+            button.heightAnchor.constraint(equalTo: button.widthAnchor, multiplier: 0.15).isActive = true
             answerStackView.addArrangedSubview(button)
         }
         
         updateAnswerButtonsState(enabled: true)
+    }
+    
+    @objc private func answerSelected(_ sender: UIButton) {
+        guard let answer = sender.titleLabel?.text else { return }
+        
+        let isCorrect = answer == viewModel.currentQuestion?.correctAnswer
+        playSound(isCorrect ? .correct : .incorrect)
+        
+        updateAnswerButtonsState(enabled: false)
+        highlightAnswers(selectedButton: sender, isCorrect: isCorrect)
+        
+        viewModel.answerSelected(answer)
     }
     
     private func updateAnswerButtonsState(enabled: Bool) {
@@ -228,23 +237,30 @@ class GameViewController: UIViewController {
         }
     }
     
-    @objc private func answerSelected(_ sender: UIButton) {
-        guard let answer = sender.titleLabel?.text else { return }
-        
-        let correct = answer == viewModel.currentQuestion?.correctAnswer
-        playSound(correct ? .correct : .incorrect)
-        
+    private func highlightAnswers(selectedButton: UIButton, isCorrect: Bool) {
+        let correctAnswer = viewModel.currentQuestion?.correctAnswer
         UIView.animate(withDuration: 0.3, animations: {
-            sender.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
-            sender.backgroundColor = correct ? .green : .red
+            selectedButton.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+            selectedButton.backgroundColor = isCorrect ? .green : .red
+            if !isCorrect {
+                self.answerStackView.arrangedSubviews.forEach { view in
+                    if let button = view as? UIButton,
+                       button.titleLabel?.text == correctAnswer {
+                        button.backgroundColor = .green
+                        button.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+                    }
+                }
+            }
         }) { _ in
             UIView.animate(withDuration: 0.3) {
-                sender.transform = .identity
-                sender.backgroundColor = Styling.primaryColor
+                self.answerStackView.arrangedSubviews.forEach { view in
+                    if let button = view as? UIButton {
+                        button.transform = .identity
+                        button.backgroundColor = Styling.primaryColor
+                    }
+                }
             }
         }
-        
-        viewModel.answerSelected(answer)
     }
     
     private func playSound(_ sound: SystemSoundName) {

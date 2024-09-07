@@ -19,6 +19,7 @@ class NewGameViewController: UIViewController {
     private let questionCountLabel = UILabel()
     private let categoryButton = UIButton()
     private let startButton = UIButton()
+    private let activityIndicator = UIActivityIndicatorView(style: .large)
     
     init(viewModel: NewGameViewModel) {
         self.viewModel = viewModel
@@ -60,6 +61,13 @@ class NewGameViewController: UIViewController {
         setupQuestionCountControl()
         setupCategoryButton()
         setupStartButton()
+        
+        view.addSubview(activityIndicator)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
     }
     
     private func setupDifficultyControl() {
@@ -137,17 +145,21 @@ class NewGameViewController: UIViewController {
     }
     
     @objc private func startQuizTapped() {
+        startButton.isEnabled = false
+        activityIndicator.startAnimating()
         viewModel.startQuiz()
             .receive(on: DispatchQueue.main)
-            .sink { completion in
+            .sink { [weak self] completion in
+                self?.startButton.isEnabled = true
+                self?.activityIndicator.stopAnimating()
                 switch completion {
                 case .finished:
                     break
                 case .failure(let error):
-                    self.showError(error)
+                    self?.showError(error)
                 }
-            } receiveValue: { quiz in
-                self.startGame(with: quiz)
+            } receiveValue: { [weak self] quiz in
+                self?.startGame(with: quiz)
             }
             .store(in: &cancellables)
     }

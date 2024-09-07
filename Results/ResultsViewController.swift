@@ -85,26 +85,3 @@ class ResultsViewController: UIViewController {
         }
     }
 }
-
-import UIKit
-
-struct Styling {
-    static let primaryColor = UIColor(red: 0.2, green: 0.6, blue: 1.0, alpha: 1.0)
-    static let secondaryColor = UIColor(red: 1.0, green: 0.8, blue: 0.0, alpha: 1.0)
-    static let backgroundColor = UIColor(red: 0.95, green: 0.95, blue: 0.95, alpha: 1.0)
-    
-    static let titleFont = UIFont.systemFont(ofSize: 24, weight: .bold)
-    static let bodyFont = UIFont.systemFont(ofSize: 18, weight: .regular)
-    
-    static func styleButton(_ button: UIButton) {
-        button.backgroundColor = primaryColor
-        button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 10
-        button.titleLabel?.font = bodyFont
-    }
-    
-    static func styleLabel(_ label: UILabel) {
-        label.textColor = .darkGray
-        label.font = bodyFont
-    }
-}

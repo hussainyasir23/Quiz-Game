@@ -37,38 +37,47 @@ class ResultsViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = Styling.primaryBackgroundColor
         
         let stackView = UIStackView(arrangedSubviews: [scoreLabel, accuracyLabel, timeLabel, highScoreLabel, playAgainButton])
         stackView.axis = .vertical
-        stackView.spacing = 20
+        stackView.spacing = Styling.standardPadding
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        
         view.addSubview(stackView)
         
         NSLayoutConstraint.activate([
             stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Styling.standardPadding),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Styling.standardPadding)
         ])
         
+        setupLabels()
+        setupPlayAgainButton()
+    }
+    
+    private func setupLabels() {
         scoreLabel.text = "Score: \(score)/\(totalQuestions)"
-        scoreLabel.font = UIFont.boldSystemFont(ofSize: 24)
         scoreLabel.textAlignment = .center
         
         let accuracy = Double(score) / Double(totalQuestions) * 100
         accuracyLabel.text = String(format: "Accuracy: %.1f%%", accuracy)
-        accuracyLabel.font = UIFont.systemFont(ofSize: 18)
         accuracyLabel.textAlignment = .center
         
         timeLabel.text = String(format: "Total Time: %.1f seconds", totalTime)
-        timeLabel.font = UIFont.systemFont(ofSize: 18)
         timeLabel.textAlignment = .center
         
-        highScoreLabel.font = UIFont.systemFont(ofSize: 18)
         highScoreLabel.textAlignment = .center
         
+        [scoreLabel, accuracyLabel, timeLabel, highScoreLabel].forEach { Styling.styleLabel($0) }
+        
+        scoreLabel.font = Styling.titleFont
+    }
+    
+    private func setupPlayAgainButton() {
         playAgainButton.setTitle("Play Again", for: .normal)
         playAgainButton.addTarget(self, action: #selector(playAgainTapped), for: .touchUpInside)
+        Styling.styleButton(playAgainButton, isTitle: true)
     }
     
     @objc private func playAgainTapped() {

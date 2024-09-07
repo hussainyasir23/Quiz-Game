@@ -159,7 +159,8 @@ class NewGameViewController: UIViewController {
     }
     
     private func startGame(with quiz: Quiz) {
-        // Navigate to the game screen with the fetched quiz
-        // This will be implemented in the next step
+        let gameViewModel = GameViewModel(quiz: quiz)
+        let gameViewController = GameViewController(viewModel: gameViewModel)
+        navigationController?.pushViewController(gameViewController, animated: true)
     }
 }

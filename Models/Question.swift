@@ -22,12 +22,12 @@ struct Question {
 
 extension Question {
     init(from apiResponse: QuestionAPIResponse) {
-        self.category = apiResponse.category
-        self.type = QuestionType(rawValue: apiResponse.type) ?? .any
-        self.difficulty = Difficulty(rawValue: apiResponse.difficulty.lowercased()) ?? .any
-        self.question = apiResponse.question
-        self.correctAnswer = apiResponse.correctAnswer
-        self.incorrectAnswers = apiResponse.incorrectAnswers
+        self.category = apiResponse.category.decodedHTMLString
+        self.type = QuestionType(rawValue: apiResponse.type) ?? .multiple
+        self.difficulty = Difficulty(rawValue: apiResponse.difficulty.lowercased()) ?? .medium
+        self.question = apiResponse.question.decodedHTMLString
+        self.correctAnswer = apiResponse.correctAnswer.decodedHTMLString
+        self.incorrectAnswers = apiResponse.incorrectAnswers.map { $0.decodedHTMLString }
     }
 }
 
@@ -43,5 +43,19 @@ struct QuestionAPIResponse: Decodable {
         case category, type, difficulty, question
         case correctAnswer = "correct_answer"
         case incorrectAnswers = "incorrect_answers"
+    }
+}
+
+extension String {
+    var decodedHTMLString: String {
+        guard let data = self.data(using: .utf8) else { return self }
+        let options: [NSAttributedString.DocumentReadingOptionKey: Any] = [
+            .documentType: NSAttributedString.DocumentType.html,
+            .characterEncoding: String.Encoding.utf8.rawValue
+        ]
+        guard let attributedString = try? NSAttributedString(data: data, options: options, documentAttributes: nil) else {
+            return self
+        }
+        return attributedString.string
     }
 }

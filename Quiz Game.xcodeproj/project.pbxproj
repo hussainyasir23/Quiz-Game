@@ -64,14 +64,14 @@
 		54EBF7602680AC1600A77A5E /* Quiz Game */ = {
 			isa = PBXGroup;
 			children = (
-				5417CC392685908A000B6A2E /* ResultViewController.swift */,
-				54EBF7792681D23000A77A5E /* GameViewController.swift */,
-				5417CC37268494DB000B6A2E /* DismissDelegate.swift */,
-				54EBF77F2681FA5C00A77A5E /* Question.swift */,
 				54EBF7612680AC1600A77A5E /* AppDelegate.swift */,
 				54EBF7632680AC1600A77A5E /* SceneDelegate.swift */,
 				54EBF7752680ACAD00A77A5E /* HomeViewController.swift */,
 				54EBF7772681B19200A77A5E /* NewGameViewController.swift */,
+				54EBF7792681D23000A77A5E /* GameViewController.swift */,
+				5417CC392685908A000B6A2E /* ResultViewController.swift */,
+				54EBF77F2681FA5C00A77A5E /* Question.swift */,
+				5417CC37268494DB000B6A2E /* DismissDelegate.swift */,
 				54EBF76A2680AC1B00A77A5E /* Assets.xcassets */,
 				54EBF76C2680AC1B00A77A5E /* LaunchScreen.storyboard */,
 				54EBF76F2680AC1B00A77A5E /* Info.plist */,
@@ -295,6 +295,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = K883F3UFX3;
 				INFOPLIST_FILE = "Quiz Game/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -313,6 +314,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = K883F3UFX3;
 				INFOPLIST_FILE = "Quiz Game/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

@@ -18,10 +18,10 @@ class ResultViewController: UIViewController {
                 temp.backgroundColor = #colorLiteral(red: 0.6509803922, green: 0.8901960784, blue: 0.9137254902, alpha: 1)
                 temp.layer.cornerRadius = 10.0
                 temp.clipsToBounds = true
-                temp.sizeToFit()
                 temp.layer.borderWidth = 2
                 temp.text = "Question \(i+1):\n\n" + question!.results[i].question + "\n\nCorrect Answer: " + question!.results[i].correct_answer
                 temp.numberOfLines = 0
+                temp.sizeToFit()
                 questionLabel.append(temp)
             }
         }

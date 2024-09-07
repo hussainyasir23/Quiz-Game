@@ -9,6 +9,8 @@ import UIKit
 
 class GameViewController: UIViewController {
     
+    let defaults = UserDefaults.standard
+    
     var url = URL(string: "https://opentdb.com/api.php?type=boolean&amount=10")
     let session = URLSession.shared
     var input = Question()
@@ -139,6 +141,8 @@ class GameViewController: UIViewController {
         postGame.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         postGame.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
         postGame.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        
+        defaults.set(currScore, forKey: "highScore")
         
         scoreLabel.text = "Score: \(currScore)"
         scoreLabel.font = .boldSystemFont(ofSize: 32)

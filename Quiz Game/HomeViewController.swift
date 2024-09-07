@@ -9,6 +9,8 @@ import UIKit
 
 class HomeViewController: UIViewController {
     
+    let defaults = UserDefaults.standard
+    
     var highScore = 0
     
     let highScoreLabel = UILabel()
@@ -22,6 +24,11 @@ class HomeViewController: UIViewController {
         
         setViews()
         setConstraints()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        highScore = defaults.integer(forKey: "highScore")
+        highScoreLabel.text = "High Score: \(highScore)"
     }
     
     func setViews(){

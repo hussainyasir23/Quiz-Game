@@ -21,6 +21,12 @@ class GameViewController: UIViewController {
     private let progressView = UIProgressView()
     
     private var audioPlayer: AVAudioPlayer?
+    private enum SystemSoundName: String {
+        case correct = "/System/Library/Audio/UISounds/message_received.caf"
+        case incorrect = "/System/Library/Audio/UISounds/low_power.caf"
+        case gameOver = "/System/Library/Audio/UISounds/alarm.caf"
+        case timerTick = "/System/Library/Audio/UISounds/short_low_high.caf"
+    }
     
     init(viewModel: GameViewModel) {
         self.viewModel = viewModel
@@ -34,29 +40,58 @@ class GameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupAudio()
         bindViewModel()
-        viewModel.startTimer()
+        viewModel.startGame()
     }
     
     private func setupUI() {
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = Styling.primaryBackgroundColor
         
         [questionLabel, answerStackView, scoreLabel, timerLabel, progressView].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
+        setupQuestionLabel()
+        setupAnswerStackView()
+        setupScoreLabel()
+        setupTimerLabel()
+        setupProgressView()
+        setupConstraints()
+    }
+    
+    private func setupQuestionLabel() {
         questionLabel.numberOfLines = 0
-        questionLabel.textAlignment = .center
-        questionLabel.font = .systemFont(ofSize: 20, weight: .bold)
-        
+        questionLabel.textAlignment = .left
+        questionLabel.font = Styling.titleFont
+        questionLabel.textColor = Styling.primaryTextColor
+    }
+    
+    private func setupAnswerStackView() {
         answerStackView.axis = .vertical
-        answerStackView.spacing = 10
+        answerStackView.spacing = 16
         answerStackView.distribution = .fillEqually
-        
+    }
+    
+    private func setupScoreLabel() {
         scoreLabel.textAlignment = .left
+        scoreLabel.font = Styling.bodyFont
+        scoreLabel.textColor = Styling.primaryTextColor
+    }
+    
+    private func setupTimerLabel() {
         timerLabel.textAlignment = .right
-        
+        timerLabel.font = Styling.bodyFont
+        timerLabel.textColor = Styling.primaryTextColor
+    }
+    
+    private func setupProgressView() {
+        progressView.progressTintColor = Styling.primaryColor
+        progressView.trackTintColor = Styling.primaryTextColor.withAlphaComponent(0.5)
+    }
+    
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             questionLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             questionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -76,25 +111,14 @@ class GameViewController: UIViewController {
             progressView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             progressView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
-        
-        view.backgroundColor = Styling.backgroundColor
-        
-        questionLabel.font = Styling.titleFont
-        questionLabel.textColor = .darkGray
-        
-        scoreLabel.font = Styling.bodyFont
-        scoreLabel.textColor = Styling.primaryColor
-        
-        timerLabel.font = Styling.bodyFont
-        timerLabel.textColor = Styling.secondaryColor
-        
-        progressView.progressTintColor = Styling.primaryColor
-        progressView.trackTintColor = Styling.secondaryColor.withAlphaComponent(0.3)
-        
-        answerStackView.arrangedSubviews.forEach { view in
-            if let button = view as? UIButton {
-                Styling.styleButton(button)
-            }
+    }
+    
+    private func setupAudio() {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default)
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Failed to set up audio session: \(error)")
         }
     }
     
@@ -114,15 +138,26 @@ class GameViewController: UIViewController {
         
         viewModel.$timeRemaining
             .receive(on: DispatchQueue.main)
-            .map { "Time: \($0)s" }
-            .assign(to: \.text, on: timerLabel)
+            .sink { [weak self] time in
+                self?.timerLabel.text = "Time: \(time)s"
+            }
             .store(in: &cancellables)
         
         viewModel.$isGameOver
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isGameOver in
                 if isGameOver {
+                    self?.playSound(.gameOver)
                     self?.showGameOverAlert()
+                }
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$shouldPlayTimerSound
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] shouldPlay in
+                if shouldPlay {
+                    self?.playSound(.timerTick)
                 }
             }
             .store(in: &cancellables)
@@ -137,6 +172,7 @@ class GameViewController: UIViewController {
             .store(in: &cancellables)
     }
     
+    
     private func updateUI(with question: Question?) {
         guard let question = question else { return }
         
@@ -148,10 +184,8 @@ class GameViewController: UIViewController {
         answers.forEach { answer in
             let button = UIButton(type: .system)
             button.setTitle(answer, for: .normal)
-            button.titleLabel?.font = .systemFont(ofSize: 18)
-            button.backgroundColor = .systemGray5
-            button.layer.cornerRadius = 10
             button.addTarget(self, action: #selector(answerSelected(_:)), for: .touchUpInside)
+            Styling.styleButton(button)
             answerStackView.addArrangedSubview(button)
         }
     }
@@ -160,7 +194,7 @@ class GameViewController: UIViewController {
         guard let answer = sender.titleLabel?.text else { return }
         
         let correct = answer == viewModel.currentQuestion?.correctAnswer
-        playSound(correct: correct)
+        playSound(correct ? .correct : .incorrect)
         
         UIView.animate(withDuration: 0.3, animations: {
             sender.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
@@ -175,6 +209,20 @@ class GameViewController: UIViewController {
         viewModel.answerSelected(answer)
     }
     
+    private func playSound(_ sound: SystemSoundName) {
+        guard let url = URL(string: sound.rawValue) else {
+            print("Invalid sound file path")
+            return
+        }
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: url)
+            audioPlayer?.prepareToPlay()
+            audioPlayer?.play()
+        } catch {
+            print("Failed to play sound: \(error.localizedDescription)")
+        }
+    }
+    
     private func showGameOverAlert() {
         let resultsVC = ResultsViewController(
             score: viewModel.score,
@@ -182,32 +230,5 @@ class GameViewController: UIViewController {
             totalTime: viewModel.totalTime
         )
         navigationController?.pushViewController(resultsVC, animated: true)
-    }
-    
-    private func setupAudio() {
-        guard let correctSoundURL = Bundle.main.url(forResource: "correct", withExtension: "mp3"),
-              let incorrectSoundURL = Bundle.main.url(forResource: "incorrect", withExtension: "mp3") else {
-            print("Sound files not found")
-            return
-        }
-        
-        do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
-            try AVAudioSession.sharedInstance().setActive(true)
-        } catch {
-            print("Failed to set up audio session: \(error)")
-        }
-    }
-    
-    private func playSound(correct: Bool) {
-        let soundName = correct ? "correct" : "incorrect"
-        guard let soundURL = Bundle.main.url(forResource: soundName, withExtension: "mp3") else { return }
-        
-        do {
-            audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
-            audioPlayer?.play()
-        } catch {
-            print("Failed to play sound: \(error)")
-        }
     }
 }

@@ -11,10 +11,11 @@ import Combine
 class GameViewModel: ObservableObject {
     
     @Published private(set) var currentQuestion: Question?
-    @Published private(set) var currentQuestionIndex: Int = 0
+    @Published private(set) var currentQuestionIndex: Int = -1
     @Published private(set) var score: Int = 0
     @Published private(set) var isGameOver: Bool = false
-    @Published private(set) var timeRemaining: Int = 15  // 15 seconds per question
+    @Published private(set) var timeRemaining: Int = 15
+    @Published private(set) var shouldPlayTimerSound: Bool = false
     
     private var quiz: Quiz
     private var timer: AnyCancellable?
@@ -27,10 +28,20 @@ class GameViewModel: ObservableObject {
     
     init(quiz: Quiz) {
         self.quiz = quiz
+    }
+    
+    func startGame() {
+        startTime = Date()
+        currentQuestionIndex = -1
+        score = 0
+        isGameOver = false
+        timeRemaining = 15
+        shouldPlayTimerSound = false
         setNextQuestion()
     }
     
-    func startTimer() {
+    private func startTimer() {
+        timer?.cancel()
         timer = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
@@ -38,35 +49,21 @@ class GameViewModel: ObservableObject {
             }
     }
     
-    func startGame() {
-        startTime = Date()
-        setNextQuestion()
-    }
-    
-    private func endGame() {
-        isGameOver = true
-        if let startTime = startTime {
-            totalTime = Date().timeIntervalSince(startTime)
-        }
-    }
-    
     private func updateTimer() {
         if timeRemaining > 0 {
             timeRemaining -= 1
+            shouldPlayTimerSound = timeRemaining <= 5
         } else {
-            answerSelected(nil)  // Time's up, treat as wrong answer
+            answerSelected(nil)
         }
     }
     
     func answerSelected(_ answer: String?) {
         timer?.cancel()
-        
-        if let currentQuestion = currentQuestion {
-            if answer == currentQuestion.correctAnswer {
-                score += 1
-            }
+        if let currentQuestion = currentQuestion,
+           answer == currentQuestion.correctAnswer {
+            score += 1
         }
-        
         setNextQuestion()
     }
     
@@ -75,12 +72,18 @@ class GameViewModel: ObservableObject {
         if currentQuestionIndex < quiz.questions.count {
             currentQuestion = quiz.questions[currentQuestionIndex]
             timeRemaining = 15
+            shouldPlayTimerSound = false
             startTimer()
         } else {
-            isGameOver = true
-        }
-        if currentQuestionIndex >= quiz.questions.count {
             endGame()
+        }
+    }
+    
+    private func endGame() {
+        isGameOver = true
+        timer?.cancel()
+        if let startTime = startTime {
+            totalTime = Date().timeIntervalSince(startTime)
         }
     }
 }

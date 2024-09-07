@@ -84,7 +84,8 @@ class HomeViewController: UIViewController {
     }
     
     @objc private func newGameTapped() {
-        let newGameViewController = NewGameViewController()
+        let newGameViewModel = viewModel.createNewGameViewModel()
+        let newGameViewController = NewGameViewController(viewModel: newGameViewModel)
         navigationController?.pushViewController(newGameViewController, animated: true)
     }
 }

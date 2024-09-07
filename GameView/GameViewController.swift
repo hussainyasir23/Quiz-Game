@@ -7,6 +7,7 @@
 
 import UIKit
 import Combine
+import AVFoundation
 
 class GameViewController: UIViewController {
     
@@ -18,6 +19,8 @@ class GameViewController: UIViewController {
     private let scoreLabel = UILabel()
     private let timerLabel = UILabel()
     private let progressView = UIProgressView()
+    
+    private var audioPlayer: AVAudioPlayer?
     
     init(viewModel: GameViewModel) {
         self.viewModel = viewModel
@@ -73,6 +76,26 @@ class GameViewController: UIViewController {
             progressView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             progressView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
+        
+        view.backgroundColor = Styling.backgroundColor
+        
+        questionLabel.font = Styling.titleFont
+        questionLabel.textColor = .darkGray
+        
+        scoreLabel.font = Styling.bodyFont
+        scoreLabel.textColor = Styling.primaryColor
+        
+        timerLabel.font = Styling.bodyFont
+        timerLabel.textColor = Styling.secondaryColor
+        
+        progressView.progressTintColor = Styling.primaryColor
+        progressView.trackTintColor = Styling.secondaryColor.withAlphaComponent(0.3)
+        
+        answerStackView.arrangedSubviews.forEach { view in
+            if let button = view as? UIButton {
+                Styling.styleButton(button)
+            }
+        }
     }
     
     private func bindViewModel() {
@@ -135,14 +158,56 @@ class GameViewController: UIViewController {
     
     @objc private func answerSelected(_ sender: UIButton) {
         guard let answer = sender.titleLabel?.text else { return }
+        
+        let correct = answer == viewModel.currentQuestion?.correctAnswer
+        playSound(correct: correct)
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            sender.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+            sender.backgroundColor = correct ? .green : .red
+        }) { _ in
+            UIView.animate(withDuration: 0.3) {
+                sender.transform = .identity
+                sender.backgroundColor = .systemGray5
+            }
+        }
+        
         viewModel.answerSelected(answer)
     }
     
     private func showGameOverAlert() {
-        let alert = UIAlertController(title: "Game Over", message: "Your final score is \(viewModel.score)", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] _ in
-            self?.navigationController?.popToRootViewController(animated: true)
-        })
-        present(alert, animated: true)
+        let resultsVC = ResultsViewController(
+            score: viewModel.score,
+            totalQuestions: viewModel.totalQuestions,
+            totalTime: viewModel.totalTime
+        )
+        navigationController?.pushViewController(resultsVC, animated: true)
+    }
+    
+    private func setupAudio() {
+        guard let correctSoundURL = Bundle.main.url(forResource: "correct", withExtension: "mp3"),
+              let incorrectSoundURL = Bundle.main.url(forResource: "incorrect", withExtension: "mp3") else {
+            print("Sound files not found")
+            return
+        }
+        
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Failed to set up audio session: \(error)")
+        }
+    }
+    
+    private func playSound(correct: Bool) {
+        let soundName = correct ? "correct" : "incorrect"
+        guard let soundURL = Bundle.main.url(forResource: soundName, withExtension: "mp3") else { return }
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
+            audioPlayer?.play()
+        } catch {
+            print("Failed to play sound: \(error)")
+        }
     }
 }

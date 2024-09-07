@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5417CC38268494DB000B6A2E /* DismissDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5417CC37268494DB000B6A2E /* DismissDelegate.swift */; };
-		5417CC3A2685908A000B6A2E /* ResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5417CC392685908A000B6A2E /* ResultViewController.swift */; };
 		548B586C2C8C43CB0094488B /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B586B2C8C43CB0094488B /* HomeViewModel.swift */; };
 		548B58762C8C4D870094488B /* Difficulty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B58752C8C4D870094488B /* Difficulty.swift */; };
 		548B58782C8C4DA10094488B /* QuestionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B58772C8C4DA10094488B /* QuestionType.swift */; };
@@ -24,6 +22,8 @@
 		548B58912C8C55740094488B /* CategorySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B58902C8C55740094488B /* CategorySelectionViewController.swift */; };
 		548B58962C8C59630094488B /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B58952C8C59630094488B /* GameViewModel.swift */; };
 		548B58982C8C59CB0094488B /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B58972C8C59CB0094488B /* GameViewController.swift */; };
+		548B589B2C8C62170094488B /* ResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B589A2C8C62170094488B /* ResultsViewController.swift */; };
+		548B589D2C8C635A0094488B /* HighScoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B589C2C8C635A0094488B /* HighScoreManager.swift */; };
 		54EBF7622680AC1600A77A5E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EBF7612680AC1600A77A5E /* AppDelegate.swift */; };
 		54EBF7642680AC1600A77A5E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EBF7632680AC1600A77A5E /* SceneDelegate.swift */; };
 		54EBF76B2680AC1B00A77A5E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 54EBF76A2680AC1B00A77A5E /* Assets.xcassets */; };
@@ -32,8 +32,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		5417CC37268494DB000B6A2E /* DismissDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DismissDelegate.swift; sourceTree = "<group>"; };
-		5417CC392685908A000B6A2E /* ResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultViewController.swift; sourceTree = "<group>"; };
 		548B586B2C8C43CB0094488B /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		548B58752C8C4D870094488B /* Difficulty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Difficulty.swift; sourceTree = "<group>"; };
 		548B58772C8C4DA10094488B /* QuestionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionType.swift; sourceTree = "<group>"; };
@@ -49,6 +47,8 @@
 		548B58902C8C55740094488B /* CategorySelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySelectionViewController.swift; sourceTree = "<group>"; };
 		548B58952C8C59630094488B /* GameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewModel.swift; sourceTree = "<group>"; };
 		548B58972C8C59CB0094488B /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
+		548B589A2C8C62170094488B /* ResultsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsViewController.swift; sourceTree = "<group>"; };
+		548B589C2C8C635A0094488B /* HighScoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighScoreManager.swift; sourceTree = "<group>"; };
 		54EBF75E2680AC1600A77A5E /* Quiz Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Quiz Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		54EBF7612680AC1600A77A5E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		54EBF7632680AC1600A77A5E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -74,6 +74,9 @@
 			children = (
 				54EBF7612680AC1600A77A5E /* AppDelegate.swift */,
 				54EBF7632680AC1600A77A5E /* SceneDelegate.swift */,
+				54EBF76A2680AC1B00A77A5E /* Assets.xcassets */,
+				54EBF76C2680AC1B00A77A5E /* LaunchScreen.storyboard */,
+				54EBF76F2680AC1B00A77A5E /* Info.plist */,
 			);
 			path = AppDelegate;
 			sourceTree = "<group>";
@@ -137,16 +140,25 @@
 			path = GameView;
 			sourceTree = "<group>";
 		};
+		548B58992C8C61D40094488B /* Results */ = {
+			isa = PBXGroup;
+			children = (
+				548B589A2C8C62170094488B /* ResultsViewController.swift */,
+				548B589C2C8C635A0094488B /* HighScoreManager.swift */,
+			);
+			path = Results;
+			sourceTree = "<group>";
+		};
 		54EBF7552680AC1600A77A5E = {
 			isa = PBXGroup;
 			children = (
-				548B586A2C8C43BA0094488B /* Home */,
-				548B588B2C8C53AC0094488B /* NewGame */,
+				548B58992C8C61D40094488B /* Results */,
 				548B58942C8C59480094488B /* GameView */,
-				548B587B2C8C4E040094488B /* Models */,
+				548B588B2C8C53AC0094488B /* NewGame */,
+				548B586A2C8C43BA0094488B /* Home */,
 				548B58802C8C4F9B0094488B /* QuizService */,
+				548B587B2C8C4E040094488B /* Models */,
 				548B58692C8C43A40094488B /* AppDelegate */,
-				54EBF7602680AC1600A77A5E /* Quiz Game */,
 				54EBF75F2680AC1600A77A5E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -157,18 +169,6 @@
 				54EBF75E2680AC1600A77A5E /* Quiz Game.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		54EBF7602680AC1600A77A5E /* Quiz Game */ = {
-			isa = PBXGroup;
-			children = (
-				5417CC392685908A000B6A2E /* ResultViewController.swift */,
-				5417CC37268494DB000B6A2E /* DismissDelegate.swift */,
-				54EBF76A2680AC1B00A77A5E /* Assets.xcassets */,
-				54EBF76C2680AC1B00A77A5E /* LaunchScreen.storyboard */,
-				54EBF76F2680AC1B00A77A5E /* Info.plist */,
-			);
-			path = "Quiz Game";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -242,21 +242,21 @@
 			files = (
 				548B58822C8C4FAE0094488B /* QuizService.swift in Sources */,
 				548B58762C8C4D870094488B /* Difficulty.swift in Sources */,
+				548B589B2C8C62170094488B /* ResultsViewController.swift in Sources */,
 				548B588D2C8C53BA0094488B /* NewGameViewModel.swift in Sources */,
 				548B586C2C8C43CB0094488B /* HomeViewModel.swift in Sources */,
 				548B58782C8C4DA10094488B /* QuestionType.swift in Sources */,
 				548B58842C8C4FCE0094488B /* QuizServiceError.swift in Sources */,
 				548B58982C8C59CB0094488B /* GameViewController.swift in Sources */,
-				5417CC38268494DB000B6A2E /* DismissDelegate.swift in Sources */,
 				548B58962C8C59630094488B /* GameViewModel.swift in Sources */,
 				548B587D2C8C4E150094488B /* Question.swift in Sources */,
 				54EBF7622680AC1600A77A5E /* AppDelegate.swift in Sources */,
-				5417CC3A2685908A000B6A2E /* ResultViewController.swift in Sources */,
 				548B588A2C8C50DF0094488B /* SessionTokenResponse.swift in Sources */,
 				548B58862C8C4FDD0094488B /* QuizServiceProtocol.swift in Sources */,
 				548B587F2C8C4E900094488B /* Quiz.swift in Sources */,
 				54EBF7642680AC1600A77A5E /* SceneDelegate.swift in Sources */,
 				548B588F2C8C54310094488B /* NewGameViewController.swift in Sources */,
+				548B589D2C8C635A0094488B /* HighScoreManager.swift in Sources */,
 				54EBF7762680ACAD00A77A5E /* HomeViewController.swift in Sources */,
 				548B58912C8C55740094488B /* CategorySelectionViewController.swift in Sources */,
 				548B587A2C8C4DB90094488B /* Category.swift in Sources */,
@@ -400,7 +400,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = K883F3UFX3;
-				INFOPLIST_FILE = "Quiz Game/Info.plist";
+				INFOPLIST_FILE = AppDelegate/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -419,7 +419,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = K883F3UFX3;
-				INFOPLIST_FILE = "Quiz Game/Info.plist";
+				INFOPLIST_FILE = AppDelegate/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

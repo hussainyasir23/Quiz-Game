@@ -18,6 +18,8 @@ class GameViewModel: ObservableObject {
     
     private var quiz: Quiz
     private var timer: AnyCancellable?
+    private var startTime: Date?
+    private(set) var totalTime: TimeInterval = 0
     
     var totalQuestions: Int {
         return quiz.questions.count
@@ -34,6 +36,18 @@ class GameViewModel: ObservableObject {
             .sink { [weak self] _ in
                 self?.updateTimer()
             }
+    }
+    
+    func startGame() {
+        startTime = Date()
+        setNextQuestion()
+    }
+    
+    private func endGame() {
+        isGameOver = true
+        if let startTime = startTime {
+            totalTime = Date().timeIntervalSince(startTime)
+        }
     }
     
     private func updateTimer() {
@@ -64,6 +78,9 @@ class GameViewModel: ObservableObject {
             startTimer()
         } else {
             isGameOver = true
+        }
+        if currentQuestionIndex >= quiz.questions.count {
+            endGame()
         }
     }
 }

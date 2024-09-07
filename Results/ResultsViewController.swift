@@ -38,6 +38,7 @@ class ResultsViewController: UIViewController {
     
     private func setupUI() {
         view.backgroundColor = Styling.primaryBackgroundColor
+        navigationController?.setNavigationBarHidden(true, animated: false)
         
         let stackView = UIStackView(arrangedSubviews: [scoreLabel, accuracyLabel, timeLabel, highScoreLabel, playAgainButton])
         stackView.axis = .vertical
@@ -78,6 +79,7 @@ class ResultsViewController: UIViewController {
         playAgainButton.setTitle("Play Again", for: .normal)
         playAgainButton.addTarget(self, action: #selector(playAgainTapped), for: .touchUpInside)
         Styling.styleButton(playAgainButton, isTitle: true)
+        playAgainButton.heightAnchor.constraint(equalTo: playAgainButton.widthAnchor, multiplier: 0.15).isActive = true
     }
     
     @objc private func playAgainTapped() {

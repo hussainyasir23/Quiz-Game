@@ -91,20 +91,7 @@ class NewGameViewController: UIViewController {
             stackView.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor, constant: Styling.standardPadding),
             stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Styling.standardPadding),
             stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Styling.standardPadding),
-            stackView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -Styling.standardPadding)
-        ])
-    }
-    
-    private func setupConstraints(for stackView: UIStackView) {
-        [stackView, activityIndicator].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
-        
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Styling.standardPadding),
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Styling.standardPadding),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Styling.standardPadding),
-            
-            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            stackView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -Styling.standardPadding),
         ])
     }
     
@@ -158,6 +145,7 @@ class NewGameViewController: UIViewController {
         startButton.setTitle("Start Quiz", for: .normal)
         startButton.addTarget(self, action: #selector(startQuizTapped), for: .touchUpInside)
         Styling.styleButton(startButton, isTitle: true)
+        startButton.heightAnchor.constraint(equalTo: startButton.widthAnchor, multiplier: 0.15).isActive = true
     }
     
     private func bindViewModel() {

@@ -39,7 +39,7 @@ struct Styling {
     }
     
     static func styleSlider(_ slider: UISlider) {
-        slider.tintColor = primaryColor
+        slider.tintColor = primaryTextColor.withAlphaComponent(0.5)
         slider.thumbTintColor = primaryColor
     }
 }

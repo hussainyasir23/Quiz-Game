@@ -88,8 +88,7 @@ class GameViewController: UIViewController {
     }
     
     private func setupProgressView() {
-        progressView.progressTintColor = Styling.primaryColor
-        progressView.trackTintColor = Styling.primaryTextColor.withAlphaComponent(0.25)
+        progressView.progressTintColor = Styling.primaryTextColor
     }
     
     private func setupConstraints() {
@@ -110,7 +109,7 @@ class GameViewController: UIViewController {
             
             progressView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             progressView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            progressView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            progressView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
         ])
     }
     

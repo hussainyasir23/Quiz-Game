@@ -9,8 +9,7 @@ A modern, interactive quiz application built with Swift and UIKit, leveraging th
 - [Architecture](#architecture)
 - [API Integration](#api-integration)
 - [Future Improvements](#future-improvements)
-- [Contributing](#contributing)
-- [License](#license)
+- [Project Status](#project-status)
 
 ## Features
 

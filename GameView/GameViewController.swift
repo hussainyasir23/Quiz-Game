@@ -88,7 +88,7 @@ class GameViewController: UIViewController {
     }
     
     private func setupProgressView() {
-        progressView.progressTintColor = Styling.primaryTextColor
+        progressView.progressTintColor = Styling.primaryTextColor.withAlphaComponent(0.5)
     }
     
     private func setupConstraints() {
@@ -216,7 +216,10 @@ class GameViewController: UIViewController {
             let button = UIButton(type: .system)
             button.setTitle(answer, for: .normal)
             button.addTarget(self, action: #selector(answerSelected(_:)), for: .touchUpInside)
-            Styling.styleButton(button)
+            button.backgroundColor = Styling.primaryColor
+            button.setTitleColor(Styling.primaryTextColor, for: .normal)
+            button.layer.cornerRadius = Styling.cornerRadius
+            button.titleLabel?.font = Styling.bodyFont
             button.heightAnchor.constraint(equalTo: button.widthAnchor, multiplier: 0.15).isActive = true
             answerStackView.addArrangedSubview(button)
         }

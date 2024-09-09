@@ -115,7 +115,11 @@ class NewGameViewController: UIViewController {
         }
         difficultySegmentedControl.selectedSegmentIndex = 0
         difficultySegmentedControl.addTarget(self, action: #selector(difficultyChanged), for: .valueChanged)
-        Styling.styleSegmentedControl(difficultySegmentedControl)
+        difficultySegmentedControl.backgroundColor = Styling.primaryBackgroundColor
+        difficultySegmentedControl.selectedSegmentTintColor = Styling.primaryColor
+        difficultySegmentedControl.setTitleTextAttributes([.font: Styling.bodyFont,
+                                                           .foregroundColor: Styling.primaryTextColor],
+                                                          for: .normal)
     }
     
     private func setupTypeControl() {
@@ -125,7 +129,11 @@ class NewGameViewController: UIViewController {
         }
         typeSegmentedControl.selectedSegmentIndex = 0
         typeSegmentedControl.addTarget(self, action: #selector(typeChanged), for: .valueChanged)
-        Styling.styleSegmentedControl(typeSegmentedControl)
+        typeSegmentedControl.backgroundColor = Styling.primaryBackgroundColor
+        typeSegmentedControl.selectedSegmentTintColor = Styling.primaryColor
+        typeSegmentedControl.setTitleTextAttributes([.font: Styling.bodyFont,
+                                                           .foregroundColor: Styling.primaryTextColor],
+                                                          for: .normal)
     }
     
     private func setupQuestionCountControl() {
@@ -133,23 +141,31 @@ class NewGameViewController: UIViewController {
         questionCountSlider.maximumValue = Float(viewModel.questionCountsMax)
         questionCountSlider.value = Float(viewModel.selectedQuestionCount)
         questionCountSlider.addTarget(self, action: #selector(questionCountChanged), for: .valueChanged)
-        Styling.styleSlider(questionCountSlider)
+        questionCountSlider.tintColor = Styling.primaryTextColor.withAlphaComponent(0.5)
+        questionCountSlider.thumbTintColor = Styling.primaryColor
         
         questionCountLabel.text = "Number of Questions: \(viewModel.selectedQuestionCount)"
         questionCountLabel.textAlignment = .center
-        Styling.styleLabel(questionCountLabel)
+        questionCountLabel.font = Styling.bodyFont
+        questionCountLabel.textColor = Styling.primaryTextColor
     }
     
     private func setupCategoryButton() {
         categoryButton.setTitle("Select Category", for: .normal)
         categoryButton.addTarget(self, action: #selector(categoryTapped), for: .touchUpInside)
-        Styling.styleButton(categoryButton)
+        categoryButton.backgroundColor = Styling.primaryColor
+        categoryButton.setTitleColor(Styling.primaryTextColor, for: .normal)
+        categoryButton.layer.cornerRadius = Styling.cornerRadius
+        categoryButton.titleLabel?.font = Styling.bodyFont
     }
     
     private func setupStartButton() {
         startButton.setTitle("Start Quiz", for: .normal)
         startButton.addTarget(self, action: #selector(startQuizTapped), for: .touchUpInside)
-        Styling.styleButton(startButton, isTitle: true)
+        startButton.backgroundColor = Styling.primaryColor
+        startButton.setTitleColor(Styling.primaryTextColor, for: .normal)
+        startButton.layer.cornerRadius = Styling.cornerRadius
+        startButton.titleLabel?.font = Styling.titleFont
         startButton.heightAnchor.constraint(equalTo: startButton.widthAnchor, multiplier: 0.15).isActive = true
     }
     

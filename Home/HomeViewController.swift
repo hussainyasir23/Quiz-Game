@@ -62,7 +62,10 @@ class HomeViewController: UIViewController {
     private func setupNewGameButton() {
         newGameButton.setTitle("New Game!", for: .normal)
         newGameButton.addTarget(self, action: #selector(newGameTapped), for: .touchUpInside)
-        Styling.styleButton(newGameButton, isTitle: true)
+        newGameButton.backgroundColor = Styling.primaryColor
+        newGameButton.setTitleColor(Styling.primaryTextColor, for: .normal)
+        newGameButton.layer.cornerRadius = Styling.cornerRadius
+        newGameButton.titleLabel?.font = Styling.titleFont
     }
     
     private func setupConstraints() {

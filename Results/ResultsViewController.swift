@@ -70,7 +70,10 @@ class ResultsViewController: UIViewController {
         
         highScoreLabel.textAlignment = .center
         
-        [scoreLabel, accuracyLabel, timeLabel, highScoreLabel].forEach { Styling.styleLabel($0) }
+        [scoreLabel, accuracyLabel, timeLabel, highScoreLabel].forEach { label in
+            label.font = Styling.bodyFont
+            label.textColor = Styling.primaryTextColor
+        }
         
         scoreLabel.font = Styling.titleFont
     }
@@ -78,7 +81,10 @@ class ResultsViewController: UIViewController {
     private func setupPlayAgainButton() {
         playAgainButton.setTitle("Play Again", for: .normal)
         playAgainButton.addTarget(self, action: #selector(playAgainTapped), for: .touchUpInside)
-        Styling.styleButton(playAgainButton, isTitle: true)
+        playAgainButton.backgroundColor = Styling.primaryColor
+        playAgainButton.setTitleColor(Styling.primaryTextColor, for: .normal)
+        playAgainButton.layer.cornerRadius = Styling.cornerRadius
+        playAgainButton.titleLabel?.font = Styling.titleFont
         playAgainButton.heightAnchor.constraint(equalTo: playAgainButton.widthAnchor, multiplier: 0.15).isActive = true
     }
     

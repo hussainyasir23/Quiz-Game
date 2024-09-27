@@ -10,12 +10,58 @@ import Combine
 
 class HomeViewController: UIViewController {
     
+    // MARK: - Properties
     private let viewModel: HomeViewModel
     private var cancellables = Set<AnyCancellable>()
     
-    private let highScoreLabel = UILabel()
-    private let newGameButton = UIButton(type: .system)
+    // MARK: - UI Elements
+    private lazy var logoImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.image = UIImage(named: "quiz-logo")
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
     
+    private lazy var startQuizButton: UIButton = {
+        let button = UIButton(configuration: .filled())
+        button.configuration?.title = "Start Quiz"
+        button.configuration?.image = UIImage(systemName: "play.fill")
+        button.configuration?.imagePadding = 8
+        button.configuration?.cornerStyle = .large
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(startQuizTapped), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var highScoreLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.preferredFont(forTextStyle: .headline)
+        label.adjustsFontForContentSizeCategory = true
+        label.accessibilityLabel = "High Score Label"
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private lazy var settingsButton: UIButton = {
+        let button = UIButton(configuration: .plain())
+        button.configuration?.image = UIImage(systemName: "gear")
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(settingsTapped), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var stackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [logoImageView, startQuizButton, highScoreLabel])
+        stackView.axis = .vertical
+        stackView.spacing = 24
+        stackView.alignment = .center
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
+    // MARK: - Initializers
     init(viewModel: HomeViewModel = HomeViewModel()) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -25,6 +71,7 @@ class HomeViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
@@ -36,52 +83,41 @@ class HomeViewController: UIViewController {
         viewModel.loadHighScore()
     }
     
+    // MARK: - UI Setup
     private func setupViews() {
-        view.backgroundColor = Styling.primaryBackgroundColor
-        navigationController?.setNavigationBarHidden(true, animated: false)
-        
-        [highScoreLabel, newGameButton].forEach {
-            view.addSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
-        
-        setupHighScoreLabel()
-        setupNewGameButton()
+        configureViewAppearance()
+        addSubviews()
         setupConstraints()
     }
     
-    private func setupHighScoreLabel() {
-        highScoreLabel.font = Styling.titleFont
-        highScoreLabel.textAlignment = .center
-        highScoreLabel.backgroundColor = Styling.primaryColor
-        highScoreLabel.textColor = Styling.primaryTextColor
-        highScoreLabel.layer.cornerRadius = Styling.cornerRadius
-        highScoreLabel.layer.masksToBounds = true
+    private func configureViewAppearance() {
+        view.backgroundColor = .systemBackground
+        navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
-    private func setupNewGameButton() {
-        newGameButton.setTitle("New Game!", for: .normal)
-        newGameButton.addTarget(self, action: #selector(newGameTapped), for: .touchUpInside)
-        newGameButton.backgroundColor = Styling.primaryColor
-        newGameButton.setTitleColor(Styling.primaryTextColor, for: .normal)
-        newGameButton.layer.cornerRadius = Styling.cornerRadius
-        newGameButton.titleLabel?.font = Styling.titleFont
+    private func addSubviews() {
+        view.addSubview(stackView)
+        view.addSubview(settingsButton)
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            highScoreLabel.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: Styling.standardPadding),
-            highScoreLabel.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -Styling.standardPadding),
-            highScoreLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor, constant: -Styling.standardPadding / 2),
-            highScoreLabel.heightAnchor.constraint(equalTo: highScoreLabel.widthAnchor, multiplier: 0.25),
+            stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
-            newGameButton.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: Styling.standardPadding),
-            newGameButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -Styling.standardPadding),
-            newGameButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor, constant: Styling.standardPadding / 2),
-            newGameButton.heightAnchor.constraint(equalTo: newGameButton.widthAnchor, multiplier: 0.25)
+            logoImageView.heightAnchor.constraint(equalToConstant: 120),
+            logoImageView.widthAnchor.constraint(equalToConstant: 120),
+            
+            startQuizButton.heightAnchor.constraint(equalToConstant: 50),
+            startQuizButton.widthAnchor.constraint(equalTo: stackView.widthAnchor, multiplier: 0.7),
+            
+            settingsButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            settingsButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
         ])
     }
     
+    // MARK: - ViewModel Binding
     private func bindViewModel() {
         viewModel.$highScore
             .receive(on: DispatchQueue.main)
@@ -91,9 +127,15 @@ class HomeViewController: UIViewController {
             .store(in: &cancellables)
     }
     
-    @objc private func newGameTapped() {
+    // MARK: - Button Actions
+    @objc private func startQuizTapped() {
         let newGameViewModel = viewModel.createNewGameViewModel()
         let newGameViewController = NewGameViewController(viewModel: newGameViewModel)
         navigationController?.pushViewController(newGameViewController, animated: true)
+    }
+    
+    @objc private func settingsTapped() {
+        let settingsViewController = SettingsViewController()
+        navigationController?.pushViewController(settingsViewController, animated: true)
     }
 }

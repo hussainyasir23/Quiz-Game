@@ -14,6 +14,7 @@
 		542F7AC52CA7D57500F9921E /* OptionSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542F7AC42CA7D57500F9921E /* OptionSheetViewController.swift */; };
 		542F7AC72CA7E5DE00F9921E /* Option.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542F7AC62CA7E5DE00F9921E /* Option.swift */; };
 		542F7ACA2CA8187900F9921E /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542F7AC92CA8187900F9921E /* String+Extension.swift */; };
+		542F7ACD2CA836AC00F9921E /* FeedbackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542F7ACC2CA836AC00F9921E /* FeedbackManager.swift */; };
 		548B586C2C8C43CB0094488B /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B586B2C8C43CB0094488B /* HomeViewModel.swift */; };
 		548B58762C8C4D870094488B /* Difficulty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B58752C8C4D870094488B /* Difficulty.swift */; };
 		548B58782C8C4DA10094488B /* QuestionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B58772C8C4DA10094488B /* QuestionType.swift */; };
@@ -45,6 +46,7 @@
 		542F7AC42CA7D57500F9921E /* OptionSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionSheetViewController.swift; sourceTree = "<group>"; };
 		542F7AC62CA7E5DE00F9921E /* Option.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Option.swift; sourceTree = "<group>"; };
 		542F7AC92CA8187900F9921E /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
+		542F7ACC2CA836AC00F9921E /* FeedbackManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackManager.swift; sourceTree = "<group>"; };
 		548B586B2C8C43CB0094488B /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		548B58752C8C4D870094488B /* Difficulty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Difficulty.swift; sourceTree = "<group>"; };
 		548B58772C8C4DA10094488B /* QuestionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionType.swift; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 			isa = PBXGroup;
 			children = (
 				542F7AC92CA8187900F9921E /* String+Extension.swift */,
+				542F7ACC2CA836AC00F9921E /* FeedbackManager.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -291,6 +294,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				548B58822C8C4FAE0094488B /* QuizService.swift in Sources */,
+				542F7ACD2CA836AC00F9921E /* FeedbackManager.swift in Sources */,
 				548B58762C8C4D870094488B /* Difficulty.swift in Sources */,
 				548B589B2C8C62170094488B /* ResultsViewController.swift in Sources */,
 				548B588D2C8C53BA0094488B /* QuizConfiguratorViewModel.swift in Sources */,

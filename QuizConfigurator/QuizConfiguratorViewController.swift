@@ -10,8 +10,12 @@ import Combine
 
 class QuizConfiguratorViewController: UIViewController {
     
+    // MARK: - Properties
+    
     private let viewModel: QuizConfiguratorViewModel
     private var cancellables = Set<AnyCancellable>()
+    
+    // MARK: - UI Elements
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -19,7 +23,7 @@ class QuizConfiguratorViewController: UIViewController {
         return scrollView
     }()
     
-    private lazy var stackView: UIStackView =  {
+    private lazy var stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.alignment = .center
@@ -28,14 +32,72 @@ class QuizConfiguratorViewController: UIViewController {
         return stackView
     }()
     
-    private let loadingOverlay = UIView()
-    private let activityIndicator = UIActivityIndicatorView(style: .large)
+    private lazy var loadingOverlay: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .systemBackground.withAlphaComponent(0.7)
+        view.isHidden = true
+        return view
+    }()
     
-    private let difficultySegmentedControl = UISegmentedControl()
-    private let typeSegmentedControl = UISegmentedControl()
-    private let questionCountSlider = UISlider()
-    private let questionCountLabel = UILabel()
-    private let categoryButton = UIButton(type: .system)
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        indicator.hidesWhenStopped = true
+        indicator.color = .label
+        return indicator
+    }()
+    
+    private lazy var difficultySegmentedControl: UISegmentedControl = {
+        let control = UISegmentedControl()
+        control.selectedSegmentTintColor = .systemBlue
+        control.accessibilityLabel = "Difficulty"
+        control.addTarget(self, action: #selector(difficultyChanged), for: .valueChanged)
+        return configureSegmentedControl(control, with: viewModel.difficulties.map { $0.displayName })
+    }()
+    
+    private lazy var typeSegmentedControl: UISegmentedControl = {
+        let control = UISegmentedControl()
+        control.selectedSegmentTintColor = .systemBlue
+        control.accessibilityLabel = "Question Type"
+        control.addTarget(self, action: #selector(typeChanged), for: .valueChanged)
+        return configureSegmentedControl(control, with: viewModel.questionTypes.map { $0.displayName })
+    }()
+    
+    private lazy var questionCountSlider: UISlider = {
+        let slider = UISlider()
+        slider.minimumValue = Float(viewModel.questionCountsMin)
+        slider.maximumValue = Float(viewModel.questionCountsMax)
+        slider.value = Float(viewModel.selectedQuestionCount)
+        slider.tintColor = .systemBlue
+        slider.accessibilityLabel = "Number of Questions"
+        slider.accessibilityHint = "Adjust the number of questions for the quiz"
+        slider.addTarget(self, action: #selector(questionCountChanged), for: .valueChanged)
+        return slider
+    }()
+    
+    private lazy var questionCountLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.font = UIFont.preferredFont(forTextStyle: .body)
+        label.text = "Number of Questions: \(viewModel.selectedQuestionCount)"
+        return label
+    }()
+    
+    private lazy var categoryButton: UIButton = {
+        let button = UIButton(configuration: .filled())
+        button.configuration?.title = "Select Category"
+        button.configuration?.image = UIImage(systemName: "chevron.down")?.withConfiguration(UIImage.SymbolConfiguration(scale: .small))
+        button.configuration?.imagePlacement = .trailing
+        button.configuration?.imagePadding = 8
+        button.configuration?.cornerStyle = .medium
+        button.configuration?.baseBackgroundColor = .systemBlue
+        button.configuration?.baseForegroundColor = .white
+        button.accessibilityLabel = "Category"
+        button.accessibilityHint = "Select a category for your quiz"
+        button.addTarget(self, action: #selector(categoryTapped), for: .touchUpInside)
+        return button
+    }()
     
     private lazy var beginButton: UIButton = {
         let button = UIButton(configuration: .filled())
@@ -45,12 +107,13 @@ class QuizConfiguratorViewController: UIViewController {
         button.configuration?.cornerStyle = .large
         button.configuration?.baseBackgroundColor = .systemGreen
         button.configuration?.baseForegroundColor = .white
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(beginQuizTapped), for: .touchUpInside)
         button.accessibilityLabel = "Begin Quiz"
         button.accessibilityHint = "Starts the quiz with the selected configuration"
+        button.addTarget(self, action: #selector(beginQuizTapped), for: .touchUpInside)
         return button
     }()
+    
+    // MARK: - Initializers
     
     init(viewModel: QuizConfiguratorViewModel) {
         self.viewModel = viewModel
@@ -61,12 +124,16 @@ class QuizConfiguratorViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupNavigation()
         bindViewModel()
     }
+    
+    // MARK: - Setup Methods
     
     private func setupUI() {
         view.backgroundColor = .systemGroupedBackground
@@ -101,10 +168,10 @@ class QuizConfiguratorViewController: UIViewController {
     }
     
     private func setupControls() {
-        addCardControlGroup(header: "Difficulty", control: setupDifficultyControl())
-        addCardControlGroup(header: "Question Type", control: setupTypeControl())
+        addCardControlGroup(header: "Difficulty", control: difficultySegmentedControl)
+        addCardControlGroup(header: "Question Type", control: typeSegmentedControl)
         addCardControlGroup(header: "Number of Questions", control: setupQuestionCountControl())
-        addCardControlGroup(header: "Category", control: setupCategoryButton())
+        addCardControlGroup(header: "Category", control: categoryButton)
         
         stackView.addArrangedSubview(beginButton)
         NSLayoutConstraint.activate([
@@ -153,57 +220,10 @@ class QuizConfiguratorViewController: UIViewController {
         return headerLabel
     }
     
-    private func setupDifficultyControl() -> UISegmentedControl {
-        difficultySegmentedControl.removeAllSegments()
-        viewModel.difficulties.enumerated().forEach { index, difficulty in
-            difficultySegmentedControl.insertSegment(withTitle: difficulty.displayName, at: index, animated: false)
-        }
-        difficultySegmentedControl.selectedSegmentIndex = 0
-        difficultySegmentedControl.addTarget(self, action: #selector(difficultyChanged), for: .valueChanged)
-        difficultySegmentedControl.selectedSegmentTintColor = .systemBlue
-        difficultySegmentedControl.setTitleTextAttributes([
-            .font: UIFont.preferredFont(forTextStyle: .body),
-            .foregroundColor: UIColor.label
-        ], for: .normal)
-        difficultySegmentedControl.setTitleTextAttributes([
-            .font: UIFont.preferredFont(forTextStyle: .body),
-            .foregroundColor: UIColor.white
-        ], for: .selected)
-        difficultySegmentedControl.accessibilityLabel = "Difficulty"
-        return difficultySegmentedControl
-    }
-    
-    private func setupTypeControl() -> UISegmentedControl {
-        typeSegmentedControl.removeAllSegments()
-        viewModel.questionTypes.enumerated().forEach { index, type in
-            typeSegmentedControl.insertSegment(withTitle: type.displayName, at: index, animated: false)
-        }
-        typeSegmentedControl.selectedSegmentIndex = 0
-        typeSegmentedControl.addTarget(self, action: #selector(typeChanged), for: .valueChanged)
-        typeSegmentedControl.selectedSegmentTintColor = .systemBlue
-        typeSegmentedControl.setTitleTextAttributes([
-            .font: UIFont.preferredFont(forTextStyle: .body),
-            .foregroundColor: UIColor.label
-        ], for: .normal)
-        typeSegmentedControl.setTitleTextAttributes([
-            .font: UIFont.preferredFont(forTextStyle: .body),
-            .foregroundColor: UIColor.white
-        ], for: .selected)
-        typeSegmentedControl.accessibilityLabel = "Question Type"
-        return typeSegmentedControl
-    }
-    
     private func setupQuestionCountControl() -> UIStackView {
         let controlStack = UIStackView()
         controlStack.axis = .vertical
         controlStack.spacing = Styling.standardPadding / 4
-        
-        questionCountSlider.minimumValue = Float(viewModel.questionCountsMin)
-        questionCountSlider.maximumValue = Float(viewModel.questionCountsMax)
-        questionCountSlider.value = Float(viewModel.selectedQuestionCount)
-        questionCountSlider.addTarget(self, action: #selector(questionCountChanged), for: .valueChanged)
-        questionCountSlider.tintColor = .systemBlue
-        questionCountSlider.accessibilityLabel = "Number of Questions"
         
         questionCountLabel.text = "Number of Questions: \(viewModel.selectedQuestionCount)"
         questionCountLabel.textAlignment = .center
@@ -217,23 +237,22 @@ class QuizConfiguratorViewController: UIViewController {
         return controlStack
     }
     
-    private func setupCategoryButton() -> UIButton {
-        var configuration = UIButton.Configuration.filled()
-        configuration.title = "Select Category"
-        configuration.image = UIImage(systemName: "chevron.down")?
-            .withConfiguration(UIImage.SymbolConfiguration(scale: .small))
-        configuration.imagePlacement = .trailing
-        configuration.imagePadding = 8
-        configuration.cornerStyle = .medium
-        configuration.baseBackgroundColor = .systemBlue
-        configuration.baseForegroundColor = .white
-        
-        categoryButton.configuration = configuration
-        categoryButton.addTarget(self, action: #selector(categoryTapped), for: .touchUpInside)
-        categoryButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
-        categoryButton.accessibilityLabel = "Category"
-        categoryButton.accessibilityHint = "Select a category for your quiz"
-        return categoryButton
+    private func setupActivityIndicator() {
+        loadingOverlay.addSubview(activityIndicator)
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: loadingOverlay.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: loadingOverlay.centerYAnchor)
+        ])
+    }
+    
+    private func setupLoadingOverlay() {
+        view.addSubview(loadingOverlay)
+        NSLayoutConstraint.activate([
+            loadingOverlay.topAnchor.constraint(equalTo: view.topAnchor),
+            loadingOverlay.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            loadingOverlay.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            loadingOverlay.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
     
     private func setupNavigation() {
@@ -249,31 +268,24 @@ class QuizConfiguratorViewController: UIViewController {
         navigationController?.navigationBar.tintColor = .label
     }
     
-    private func setupActivityIndicator() {
-        loadingOverlay.addSubview(activityIndicator)
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.color = Styling.primaryColor
-        
-        NSLayoutConstraint.activate([
-            activityIndicator.centerXAnchor.constraint(equalTo: loadingOverlay.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: loadingOverlay.centerYAnchor)
-        ])
+    private func configureSegmentedControl(_ control: UISegmentedControl, with items: [String]) -> UISegmentedControl {
+        control.removeAllSegments()
+        items.enumerated().forEach { index, item in
+            control.insertSegment(withTitle: item, at: index, animated: false)
+        }
+        control.selectedSegmentIndex = 0
+        control.setTitleTextAttributes([
+            .font: UIFont.preferredFont(forTextStyle: .body),
+            .foregroundColor: UIColor.label
+        ], for: .normal)
+        control.setTitleTextAttributes([
+            .font: UIFont.preferredFont(forTextStyle: .body),
+            .foregroundColor: UIColor.white
+        ], for: .selected)
+        return control
     }
     
-    private func setupLoadingOverlay() {
-        view.addSubview(loadingOverlay)
-        loadingOverlay.translatesAutoresizingMaskIntoConstraints = false
-        loadingOverlay.backgroundColor = Styling.primaryBackgroundColor.withAlphaComponent(0.5)
-        loadingOverlay.isHidden = true
-        
-        NSLayoutConstraint.activate([
-            loadingOverlay.topAnchor.constraint(equalTo: view.topAnchor),
-            loadingOverlay.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            loadingOverlay.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            loadingOverlay.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-    }
+    // MARK: - ViewModel Binding
     
     private func bindViewModel() {
         viewModel.$selectedCategory
@@ -283,6 +295,8 @@ class QuizConfiguratorViewController: UIViewController {
             }
             .store(in: &cancellables)
     }
+    
+    // MARK: - Actions
     
     @objc private func backTapped() {
         navigationController?.popViewController(animated: true)
@@ -294,7 +308,6 @@ class QuizConfiguratorViewController: UIViewController {
     }
     
     @objc private func typeChanged() {
-        viewModel.selectedQuestionType = viewModel.questionTypes[typeSegmentedControl.selectedSegmentIndex]
         viewModel.selectedQuestionType = viewModel.questionTypes[typeSegmentedControl.selectedSegmentIndex]
         animateSelection(typeSegmentedControl)
     }
@@ -338,10 +351,12 @@ class QuizConfiguratorViewController: UIViewController {
                     self?.showError(error)
                 }
             } receiveValue: { [weak self] quiz in
-                self?.startGame(with: quiz)
+                self?.start(quiz)
             }
             .store(in: &cancellables)
     }
+    
+    // MARK: - Loading and State Management
     
     private func startLoadingState() {
         loadingOverlay.isHidden = false
@@ -368,7 +383,7 @@ class QuizConfiguratorViewController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    private func startGame(with quiz: Quiz) {
+    private func start(_ quiz: Quiz) {
         let gameViewModel = GameViewModel(quiz: quiz)
         let gameViewController = GameViewController(viewModel: gameViewModel)
         

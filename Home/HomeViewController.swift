@@ -11,10 +11,12 @@ import Combine
 class HomeViewController: UIViewController {
     
     // MARK: - Properties
+    
     private let viewModel: HomeViewModel
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - UI Elements
+    
     private lazy var logoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -62,6 +64,7 @@ class HomeViewController: UIViewController {
     }()
     
     // MARK: - Initializers
+    
     init(viewModel: HomeViewModel = HomeViewModel()) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -72,6 +75,7 @@ class HomeViewController: UIViewController {
     }
     
     // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
@@ -84,6 +88,7 @@ class HomeViewController: UIViewController {
     }
     
     // MARK: - UI Setup
+    
     private func setupViews() {
         configureViewAppearance()
         addSubviews()
@@ -118,6 +123,7 @@ class HomeViewController: UIViewController {
     }
     
     // MARK: - ViewModel Binding
+    
     private func bindViewModel() {
         viewModel.$highScore
             .receive(on: DispatchQueue.main)
@@ -128,6 +134,7 @@ class HomeViewController: UIViewController {
     }
     
     // MARK: - Button Actions
+    
     @objc private func startQuizTapped() {
         let quizConfiguratorViewModel = viewModel.createQuizConfiguratorViewModel()
         let quizConfiguratorViewController = QuizConfiguratorViewController(viewModel: quizConfiguratorViewModel)

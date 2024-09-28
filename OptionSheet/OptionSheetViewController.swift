@@ -9,16 +9,18 @@ import Foundation
 import UIKit
 
 protocol OptionSheetViewProtocol: AnyObject {
-    func present(alert: UIAlertController, animated: Bool)
     func dismissViewController()
-    func reloadTableView()
 }
 
 class OptionSheetViewController: UIViewController, OptionSheetViewProtocol {
     
-    var presenter: OptionSheetPresenterProtocol
+    // MARK: - Properties
+    
+    private let presenter: OptionSheetPresenterProtocol
     private let titleString: String
     private lazy var requiresSearchBar: Bool = presenter.isSearchBarRequired()
+    
+    // MARK: - UI Elements
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -30,15 +32,13 @@ class OptionSheetViewController: UIViewController, OptionSheetViewProtocol {
         return label
     }()
     
-    
     private lazy var searchContainer: UIView = {
         let view = UIView()
         view.backgroundColor = .secondarySystemGroupedBackground
         view.layer.cornerRadius = 16
-        view.clipsToBounds = true
-        view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         view.layer.masksToBounds = true
+        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
@@ -58,12 +58,15 @@ class OptionSheetViewController: UIViewController, OptionSheetViewProtocol {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.bounces = false
+        tableView.backgroundColor = .systemGroupedBackground
         tableView.showsVerticalScrollIndicator = false
         tableView.tableFooterView = UIView()
-        tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CellIdentifier")
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
+    
+    // MARK: - Initializer
     
     init(presenter: OptionSheetPresenterProtocol, title: String) {
         self.presenter = presenter
@@ -75,57 +78,64 @@ class OptionSheetViewController: UIViewController, OptionSheetViewProtocol {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
         setupSubviews()
     }
     
+    // MARK: - Setup Methods
+    
     private func configureView() {
         view.backgroundColor = .systemGroupedBackground
     }
     
     private func setupSubviews() {
-        addTitleLabel()
+        setupTitleLabel()
         if requiresSearchBar {
-            addSearchContainer()
+            setupSearchContainer()
         }
-        addTableView()
+        setupTableView()
+        addDismissKeyboardGesture()
     }
     
-    private func addTitleLabel() {
+    private func setupTitleLabel() {
         view.addSubview(titleLabel)
-        titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 26).isActive = true
-        titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
-        titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
+        NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 26),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+        ])
     }
     
-    private func addSearchContainer() {
+    private func setupSearchContainer() {
         view.addSubview(searchContainer)
-        searchContainer.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16).isActive = true
-        searchContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
-        searchContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
-        searchContainer.heightAnchor.constraint(equalToConstant: 68).isActive = true
+        NSLayoutConstraint.activate([
+            searchContainer.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16),
+            searchContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            searchContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            searchContainer.heightAnchor.constraint(equalToConstant: 68)
+        ])
         
         searchContainer.addSubview(searchBar)
-        searchBar.leadingAnchor.constraint(equalTo: searchContainer.leadingAnchor, constant: 8).isActive = true
-        searchBar.trailingAnchor.constraint(equalTo: searchContainer.trailingAnchor, constant: -8).isActive = true
-        searchBar.topAnchor.constraint(equalTo: searchContainer.topAnchor).isActive = true
-        searchBar.bottomAnchor.constraint(equalTo: searchContainer.bottomAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            searchBar.leadingAnchor.constraint(equalTo: searchContainer.leadingAnchor, constant: 8),
+            searchBar.trailingAnchor.constraint(equalTo: searchContainer.trailingAnchor, constant: -8),
+            searchBar.topAnchor.constraint(equalTo: searchContainer.topAnchor),
+            searchBar.bottomAnchor.constraint(equalTo: searchContainer.bottomAnchor)
+        ])
     }
     
-    private func addTableView() {
+    private func setupTableView() {
         view.addSubview(tableView)
-        if requiresSearchBar {
-            tableView.topAnchor.constraint(equalTo: searchContainer.bottomAnchor).isActive = true
-        } else {
-            tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16).isActive = true
-        }
-        tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
-        tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
-        tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -32).isActive = true
-        tableView.backgroundColor = .systemGroupedBackground
-        addDismissKeyboardGesture()
+        NSLayoutConstraint.activate([
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -32),
+            tableView.topAnchor.constraint(equalTo: requiresSearchBar ? searchContainer.bottomAnchor : titleLabel.bottomAnchor, constant: requiresSearchBar ? 0 : 16)
+        ])
     }
     
     private func addDismissKeyboardGesture() {
@@ -145,14 +155,6 @@ class OptionSheetViewController: UIViewController, OptionSheetViewProtocol {
     public func dismissViewController() {
         dismiss(animated: true)
     }
-    
-    func reloadTableView() {
-        tableView.reloadData()
-    }
-    
-    func present(alert: UIAlertController, animated: Bool) {
-        present(alert, animated: animated, completion: nil)
-    }
 }
 
 extension OptionSheetViewController: UITableViewDataSource, UITableViewDelegate {
@@ -165,32 +167,37 @@ extension OptionSheetViewController: UITableViewDataSource, UITableViewDelegate 
         return presenter.getNumberOfRows(in: section)
     }
     
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        configureCellSelectionState(cell, at: indexPath)
-        configureCellCorners(cell, at: indexPath)
-        configureCellSeparator(cell, at: indexPath)
-    }
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let option = presenter.getActionOption(at: indexPath)
         let cell = tableView.dequeueReusableCell(withIdentifier: "CellIdentifier", for: indexPath)
         
+        let defaultFont = UIFont.preferredFont(forTextStyle: .body)
+        let boldFont = UIFont.boldSystemFont(ofSize: defaultFont.pointSize)
+        
         var contentConfig = cell.defaultContentConfiguration()
+        contentConfig.attributedText = option.title.attributedStringWithBoldSearchText(searchBar.text, defaultFont: defaultFont, boldFont: boldFont)
         contentConfig.image = option.image
-        contentConfig.text = option.title
-        //contentConfig.attributedText = option.title.getAttributedStringWithLocalized(with: searchBar.text, andFont: bold)
-        //contentConfig.textProperties.color =
-        //contentConfig.textProperties.font =
         
         cell.contentConfiguration = contentConfig
         cell.backgroundColor = .secondarySystemGroupedBackground
         cell.accessoryType = presenter.isSelected(at: indexPath) ? .checkmark : .none
+        
+        let selectedBackgroundView = UIView()
+        selectedBackgroundView.backgroundColor = .systemBlue.withAlphaComponent(0.15)
+        cell.selectedBackgroundView = selectedBackgroundView
+        
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         presenter.didSelectRow(at: indexPath)
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        configureCellSelectionState(cell, at: indexPath)
+        configureCellCorners(cell, at: indexPath)
+        configureCellSeparator(cell, at: indexPath)
     }
     
     private func configureCellSelectionState(_ cell: UITableViewCell, at indexPath: IndexPath) {
@@ -203,18 +210,20 @@ extension OptionSheetViewController: UITableViewDataSource, UITableViewDelegate 
         let isLastRow = indexPath.row == presenter.getNumberOfRows(in: indexPath.section) - 1
         let isFirstRowWithoutSearch = !requiresSearchBar && indexPath.row == 0
         
-        if isLastRow || isFirstRowWithoutSearch {
+        var corners: CACornerMask = []
+        
+        if isFirstRowWithoutSearch {
+            corners.insert([.layerMinXMinYCorner, .layerMaxXMinYCorner])
+        }
+        
+        if isLastRow {
+            corners.insert([.layerMinXMaxYCorner, .layerMaxXMaxYCorner])
+        }
+        
+        if !corners.isEmpty {
             cell.layer.cornerRadius = 16
+            cell.layer.maskedCorners = corners
             cell.layer.masksToBounds = true
-            cell.layer.maskedCorners = {
-                if isLastRow && isFirstRowWithoutSearch {
-                    return [.layerMinXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMinYCorner, .layerMaxXMaxYCorner]
-                } else if isLastRow {
-                    return [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-                } else {
-                    return [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-                }
-            }()
         } else {
             cell.layer.cornerRadius = 0
             cell.layer.masksToBounds = false
@@ -263,26 +272,21 @@ extension OptionSheetViewController: UISearchBarDelegate {
     }
     
     private func styleCancelButton(_ searchBar: UISearchBar) {
-        if let cancelButton = searchBar.value(forKey: OptionSheetConstants.cancelButton) as? UIButton {
-            cancelButton.setTitleColor(.systemBlue, for: .normal)
+        guard let cancelButton = searchBar.value(forKey: "cancelButton") as? UIButton else {
+            return
         }
+        cancelButton.setTitleColor(.systemBlue, for: .normal)
     }
     
     private func addClearButtonTarget(_ searchBar: UISearchBar) {
-        if let textFieldInsideSearchBar = searchBar.value(forKey: OptionSheetConstants.searchField) as? UITextField,
-           let clearButton = textFieldInsideSearchBar.value(forKey: OptionSheetConstants.clearButton) as? UIButton {
-            clearButton.addTarget(self, action: #selector(resetSearchBar), for: .touchUpInside)
+        guard let textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField,
+              let clearButton = textFieldInsideSearchBar.value(forKey: "clearButton") as? UIButton else {
+            return
         }
+        clearButton.addTarget(self, action: #selector(resetSearchBar), for: .touchUpInside)
     }
     
     @objc private func resetSearchBar() {
         searchBar(searchBar, textDidChange: "")
     }
-}
-
-struct OptionSheetConstants {
-    static let cancelButton = "cancelButton"
-    static let searchField = "searchField"
-    static let clearButton = "clearButton"
-    static let searchNoData = "search_nodata"
 }

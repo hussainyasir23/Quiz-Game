@@ -269,11 +269,13 @@ class QuizConfiguratorViewController: UIViewController {
     }
     
     @objc private func categoryTapped() {
-        let categoryVC = CategorySelectionViewController(categories: viewModel.categories, selectedCategory: viewModel.selectedCategory) { [weak self] category in
-            self?.viewModel.selectedCategory = category
+        let options = viewModel.categories.map { Option(title: $0.displayName, image: nil) }
+        let optionSheetViewController = OptionSheetAssembler.getOptionSheetViewController(with: options, title: "Select Category", selectedValue: viewModel.selectedCategory.displayName) { [weak self] option in
+            if let selectedCategory = self?.viewModel.categories.first(where: { $0.displayName == option.title }) {
+                self?.viewModel.selectedCategory = selectedCategory
+            }
         }
-        let navController = UINavigationController(rootViewController: categoryVC)
-        present(navController, animated: true)
+        navigationController?.present(optionSheetViewController, animated: true)
     }
     
     private func animateSelection(_ control: UIView) {

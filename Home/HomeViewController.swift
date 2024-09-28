@@ -138,6 +138,8 @@ class HomeViewController: UIViewController {
     @objc private func startQuizTapped() {
         let quizConfiguratorViewModel = viewModel.createQuizConfiguratorViewModel()
         let quizConfiguratorViewController = QuizConfiguratorViewController(viewModel: quizConfiguratorViewModel)
+        
+        FeedbackManager.triggerImpactFeedback(of: .light)
         navigationController?.pushViewController(quizConfiguratorViewController, animated: true)
     }
     

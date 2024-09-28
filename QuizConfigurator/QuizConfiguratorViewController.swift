@@ -317,6 +317,7 @@ class QuizConfiguratorViewController: UIViewController {
         let count = Int(questionCountSlider.value)
         viewModel.selectedQuestionCount = count
         questionCountLabel.text = "Number of Questions: \(count)"
+        FeedbackManager.triggerImpactFeedback(of: .light)
     }
     
     @objc private func categoryTapped() {
@@ -324,12 +325,14 @@ class QuizConfiguratorViewController: UIViewController {
         let optionSheetViewController = OptionSheetAssembler.getOptionSheetViewController(with: options, title: "Select Category", selectedValue: viewModel.selectedCategory.displayName) { [weak self] option in
             if let selectedCategory = self?.viewModel.categories.first(where: { $0.displayName == option.title }) {
                 self?.viewModel.selectedCategory = selectedCategory
+                FeedbackManager.triggerImpactFeedback(of: .light)
             }
         }
         navigationController?.present(optionSheetViewController, animated: true)
     }
     
     private func animateSelection(_ control: UIView) {
+        FeedbackManager.triggerImpactFeedback(of: .light)
         UIView.animate(withDuration: 0.1, animations: {
             control.transform = CGAffineTransform(scaleX: 1.05, y: 1.05)
         }) { _ in
@@ -340,6 +343,7 @@ class QuizConfiguratorViewController: UIViewController {
     }
     
     @objc private func beginQuizTapped() {
+        FeedbackManager.triggerImpactFeedback(of: .light)
         startLoadingState()
         viewModel.startQuiz()
             .receive(on: DispatchQueue.main)
@@ -381,6 +385,8 @@ class QuizConfiguratorViewController: UIViewController {
     private func showError(_ error: Error) {
         let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        
+        FeedbackManager.triggerNotificationFeedback(of: .error)
         present(alert, animated: true, completion: nil)
     }
     
@@ -395,6 +401,7 @@ class QuizConfiguratorViewController: UIViewController {
         transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
         navigationController?.view.layer.add(transition, forKey: nil)
         
+        FeedbackManager.triggerNotificationFeedback(of: .success)
         navigationController?.pushViewController(quizViewController, animated: false)
     }
 }

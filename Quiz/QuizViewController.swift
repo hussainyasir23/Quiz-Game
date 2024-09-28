@@ -1,5 +1,5 @@
 //
-//  GameViewController.swift
+//  QuizViewController.swift
 //  Quiz Game
 //
 //  Created by Yasir on 07/09/24.
@@ -9,9 +9,9 @@ import UIKit
 import Combine
 import AVFoundation
 
-class GameViewController: UIViewController {
+class QuizViewController: UIViewController {
     
-    private let viewModel: GameViewModel
+    private let viewModel: QuizViewModel
     private var cancellables: Set<AnyCancellable> = []
     
     private let questionLabel: UILabel = {
@@ -70,7 +70,7 @@ class GameViewController: UIViewController {
         case timerTick = "/System/Library/Audio/UISounds/short_low_high.caf"
     }
     
-    init(viewModel: GameViewModel) {
+    init(viewModel: QuizViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }

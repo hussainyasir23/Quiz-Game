@@ -385,8 +385,8 @@ class QuizConfiguratorViewController: UIViewController {
     }
     
     private func start(_ quiz: Quiz) {
-        let gameViewModel = GameViewModel(quiz: quiz)
-        let gameViewController = GameViewController(viewModel: gameViewModel)
+        let quizViewModel = QuizViewModel(quiz: quiz)
+        let quizViewController = QuizViewController(viewModel: quizViewModel)
         
         let transition = CATransition()
         transition.duration = 0.5
@@ -395,6 +395,6 @@ class QuizConfiguratorViewController: UIViewController {
         transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
         navigationController?.view.layer.add(transition, forKey: nil)
         
-        navigationController?.pushViewController(gameViewController, animated: false)
+        navigationController?.pushViewController(quizViewController, animated: false)
     }
 }

@@ -26,8 +26,8 @@
 		548B588A2C8C50DF0094488B /* SessionTokenResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B58892C8C50DF0094488B /* SessionTokenResponse.swift */; };
 		548B588D2C8C53BA0094488B /* QuizConfiguratorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B588C2C8C53BA0094488B /* QuizConfiguratorViewModel.swift */; };
 		548B588F2C8C54310094488B /* QuizConfiguratorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B588E2C8C54310094488B /* QuizConfiguratorViewController.swift */; };
-		548B58962C8C59630094488B /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B58952C8C59630094488B /* GameViewModel.swift */; };
-		548B58982C8C59CB0094488B /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B58972C8C59CB0094488B /* GameViewController.swift */; };
+		548B58962C8C59630094488B /* QuizViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B58952C8C59630094488B /* QuizViewModel.swift */; };
+		548B58982C8C59CB0094488B /* QuizViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B58972C8C59CB0094488B /* QuizViewController.swift */; };
 		548B589B2C8C62170094488B /* ResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B589A2C8C62170094488B /* ResultsViewController.swift */; };
 		548B589D2C8C635A0094488B /* HighScoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B589C2C8C635A0094488B /* HighScoreManager.swift */; };
 		54EBF7622680AC1600A77A5E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EBF7612680AC1600A77A5E /* AppDelegate.swift */; };
@@ -57,8 +57,8 @@
 		548B58892C8C50DF0094488B /* SessionTokenResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTokenResponse.swift; sourceTree = "<group>"; };
 		548B588C2C8C53BA0094488B /* QuizConfiguratorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizConfiguratorViewModel.swift; sourceTree = "<group>"; };
 		548B588E2C8C54310094488B /* QuizConfiguratorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizConfiguratorViewController.swift; sourceTree = "<group>"; };
-		548B58952C8C59630094488B /* GameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewModel.swift; sourceTree = "<group>"; };
-		548B58972C8C59CB0094488B /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
+		548B58952C8C59630094488B /* QuizViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizViewModel.swift; sourceTree = "<group>"; };
+		548B58972C8C59CB0094488B /* QuizViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizViewController.swift; sourceTree = "<group>"; };
 		548B589A2C8C62170094488B /* ResultsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsViewController.swift; sourceTree = "<group>"; };
 		548B589C2C8C635A0094488B /* HighScoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighScoreManager.swift; sourceTree = "<group>"; };
 		54EBF75E2680AC1600A77A5E /* Quiz Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Quiz Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -180,8 +180,8 @@
 		548B58942C8C59480094488B /* Quiz */ = {
 			isa = PBXGroup;
 			children = (
-				548B58952C8C59630094488B /* GameViewModel.swift */,
-				548B58972C8C59CB0094488B /* GameViewController.swift */,
+				548B58952C8C59630094488B /* QuizViewModel.swift */,
+				548B58972C8C59CB0094488B /* QuizViewController.swift */,
 			);
 			path = Quiz;
 			sourceTree = "<group>";
@@ -298,8 +298,8 @@
 				548B58782C8C4DA10094488B /* QuestionType.swift in Sources */,
 				542F7ACA2CA8187900F9921E /* String+Extension.swift in Sources */,
 				548B58842C8C4FCE0094488B /* QuizServiceError.swift in Sources */,
-				548B58982C8C59CB0094488B /* GameViewController.swift in Sources */,
-				548B58962C8C59630094488B /* GameViewModel.swift in Sources */,
+				548B58982C8C59CB0094488B /* QuizViewController.swift in Sources */,
+				548B58962C8C59630094488B /* QuizViewModel.swift in Sources */,
 				54285B462C8F4B9A00DFA14B /* Styling.swift in Sources */,
 				548B587D2C8C4E150094488B /* Question.swift in Sources */,
 				542F7AC52CA7D57500F9921E /* OptionSheetViewController.swift in Sources */,

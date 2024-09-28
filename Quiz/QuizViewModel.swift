@@ -1,5 +1,5 @@
 //
-//  GameViewModel.swift
+//  QuizViewModel.swift
 //  Quiz Game
 //
 //  Created by Yasir on 07/09/24.
@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-class GameViewModel: ObservableObject {
+class QuizViewModel: ObservableObject {
     
     @Published private(set) var currentQuestion: Question?
     @Published private(set) var currentQuestionIndex: Int = -1

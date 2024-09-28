@@ -8,13 +8,26 @@
 import UIKit
 import Combine
 import AVFoundation
+import AudioToolbox
 
 class QuizViewController: UIViewController {
     
-    private let viewModel: QuizViewModel
-    private var cancellables: Set<AnyCancellable> = []
+    // MARK: - Properties
     
-    private let questionLabel: UILabel = {
+    private let viewModel: QuizViewModel
+    private var cancellables = Set<AnyCancellable>()
+    private var audioPlayer: AVAudioPlayer?
+    
+    private enum GameEffect {
+        case correct
+        case incorrect
+        case gameOver
+        case timerTick
+    }
+    
+    // MARK: - UI Elements
+    
+    private lazy var questionLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
         label.textAlignment = .left
@@ -25,7 +38,7 @@ class QuizViewController: UIViewController {
         return label
     }()
     
-    private let answerStackView: UIStackView = {
+    private lazy var answerStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.spacing = 12
@@ -34,7 +47,7 @@ class QuizViewController: UIViewController {
         return stackView
     }()
     
-    private let scoreLabel: UILabel = {
+    private lazy var scoreLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
         label.font = UIFont.preferredFont(forTextStyle: .subheadline)
@@ -44,7 +57,7 @@ class QuizViewController: UIViewController {
         return label
     }()
     
-    private let timerLabel: UILabel = {
+    private lazy var timerLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .right
         label.font = UIFont.preferredFont(forTextStyle: .subheadline)
@@ -54,7 +67,7 @@ class QuizViewController: UIViewController {
         return label
     }()
     
-    private let progressView: UIProgressView = {
+    private lazy var progressView: UIProgressView = {
         let progressView = UIProgressView(progressViewStyle: .bar)
         progressView.progressTintColor = .systemBlue
         progressView.trackTintColor = .systemGray5
@@ -62,13 +75,7 @@ class QuizViewController: UIViewController {
         return progressView
     }()
     
-    private var audioPlayer: AVAudioPlayer?
-    private enum SystemSoundName: String {
-        case correct = "/System/Library/Audio/UISounds/message_received.caf"
-        case incorrect = "/System/Library/Audio/UISounds/low_power.caf"
-        case gameOver = "/System/Library/Audio/UISounds/alarm.caf"
-        case timerTick = "/System/Library/Audio/UISounds/short_low_high.caf"
-    }
+    // MARK: - Initializers
     
     init(viewModel: QuizViewModel) {
         self.viewModel = viewModel
@@ -79,6 +86,8 @@ class QuizViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -88,8 +97,10 @@ class QuizViewController: UIViewController {
         viewModel.startGame()
     }
     
+    // MARK: - Setup Methods
+    
     private func setupUI() {
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .systemGroupedBackground
         [questionLabel, answerStackView, scoreLabel, timerLabel, progressView].forEach {
             view.addSubview($0)
         }
@@ -120,8 +131,9 @@ class QuizViewController: UIViewController {
     
     private func setupAudio() {
         do {
-            try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default)
-            try AVAudioSession.sharedInstance().setActive(true)
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.ambient, mode: .default)
+            try session.setActive(true)
         } catch {
             print("Failed to set up audio session: \(error)")
         }
@@ -148,10 +160,13 @@ class QuizViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(title: "Exit", style: .destructive) {
             [weak self] _ in
+            self?.play(.gameOver)
             self?.navigationController?.popToRootViewController(animated: true)
         })
         present(alert, animated: true, completion: nil)
     }
+    
+    // MARK: - ViewModel Binding
     
     private func bindViewModel() {
         
@@ -179,7 +194,7 @@ class QuizViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isGameOver in
                 if isGameOver {
-                    self?.playSound(.gameOver)
+                    self?.play(.gameOver)
                     self?.showGameOverAlert()
                 }
             }
@@ -189,7 +204,7 @@ class QuizViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] shouldPlay in
                 if shouldPlay {
-                    self?.playSound(.timerTick)
+                    self?.play(.timerTick)
                     self?.timerLabel.textColor = .systemRed
                 } else {
                     self?.timerLabel.textColor = .secondaryLabel
@@ -207,6 +222,7 @@ class QuizViewController: UIViewController {
             .store(in: &cancellables)
     }
     
+    // MARK: - UI Updates
     
     private func updateUI(with question: Question?) {
         guard let question = question else { return }
@@ -215,28 +231,32 @@ class QuizViewController: UIViewController {
         
         answerStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
-        let answers = question.allAnswers
-        answers.forEach { answer in
-            let button = UIButton(type: .system)
-            button.setTitle(answer, for: .normal)
-            button.addTarget(self, action: #selector(answerSelected(_:)), for: .touchUpInside)
-            button.backgroundColor = .systemBlue
-            button.setTitleColor(.white, for: .normal)
-            button.layer.cornerRadius = 10
-            button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
-            button.titleLabel?.adjustsFontForContentSizeCategory = true
-            button.heightAnchor.constraint(greaterThanOrEqualToConstant: 50).isActive = true
+        question.allAnswers.forEach { answer in
+            let button = createAnswerButton(with: answer)
             answerStackView.addArrangedSubview(button)
         }
         
         updateAnswerButtonsState(enabled: true)
     }
     
+    private func createAnswerButton(with title: String) -> UIButton {
+        let button = UIButton(type: .system)
+        button.setTitle(title, for: .normal)
+        button.backgroundColor = .secondarySystemGroupedBackground
+        button.setTitleColor(.label, for: .normal)
+        button.layer.cornerRadius = 10
+        button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
+        button.titleLabel?.adjustsFontForContentSizeCategory = true
+        button.addTarget(self, action: #selector(answerSelected(_:)), for: .touchUpInside)
+        button.heightAnchor.constraint(greaterThanOrEqualToConstant: 50).isActive = true
+        return button
+    }
+    
     @objc private func answerSelected(_ sender: UIButton) {
         guard let answer = sender.titleLabel?.text else { return }
         
         let isCorrect = answer == viewModel.currentQuestion?.correctAnswer
-        playSound(isCorrect ? .correct : .incorrect)
+        play(isCorrect ? .correct : .incorrect)
         
         updateAnswerButtonsState(enabled: false)
         highlightAnswers(selectedButton: sender, isCorrect: isCorrect)
@@ -271,24 +291,25 @@ class QuizViewController: UIViewController {
                 self.answerStackView.arrangedSubviews.forEach { view in
                     if let button = view as? UIButton {
                         button.transform = .identity
-                        button.backgroundColor = .systemBlue
+                        button.backgroundColor = .secondarySystemGroupedBackground
                     }
                 }
             }
         }
     }
     
-    private func playSound(_ sound: SystemSoundName) {
-        guard let url = URL(string: sound.rawValue) else {
-            print("Invalid sound file path")
-            return
-        }
-        do {
-            audioPlayer = try AVAudioPlayer(contentsOf: url)
-            audioPlayer?.prepareToPlay()
-            audioPlayer?.play()
-        } catch {
-            print("Failed to play sound: \(error.localizedDescription)")
+    private func play(_ gameEffect: GameEffect) {
+        switch gameEffect {
+        case .correct:
+            FeedbackManager.triggerNotificationFeedback(of: .success)
+            SoundEffectManager.shared.playSound(.correct)
+        case .incorrect:
+            FeedbackManager.triggerNotificationFeedback(of: .error)
+            SoundEffectManager.shared.playSound(.incorrect)
+        case .gameOver:
+            FeedbackManager.triggerNotificationFeedback(of: .warning)
+        case .timerTick:
+            FeedbackManager.triggerImpactFeedback(of: .light)
         }
     }
     

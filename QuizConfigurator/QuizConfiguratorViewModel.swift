@@ -1,5 +1,5 @@
 //
-//  NewGameViewModel.swift
+//  QuizConfiguratorViewModel.swift
 //  Quiz Game
 //
 //  Created by Yasir on 07/09/24.
@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-class NewGameViewModel: ObservableObject {
+class QuizConfiguratorViewModel: ObservableObject {
     
     @Published var categories: [Category] = Category.allCases
     @Published var difficulties: [Difficulty] = Difficulty.allCases

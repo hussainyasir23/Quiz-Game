@@ -129,9 +129,9 @@ class HomeViewController: UIViewController {
     
     // MARK: - Button Actions
     @objc private func startQuizTapped() {
-        let newGameViewModel = viewModel.createNewGameViewModel()
-        let newGameViewController = NewGameViewController(viewModel: newGameViewModel)
-        navigationController?.pushViewController(newGameViewController, animated: true)
+        let quizConfiguratorViewModel = viewModel.createQuizConfiguratorViewModel()
+        let quizConfiguratorViewController = QuizConfiguratorViewController(viewModel: quizConfiguratorViewModel)
+        navigationController?.pushViewController(quizConfiguratorViewController, animated: true)
     }
     
     @objc private func settingsTapped() {

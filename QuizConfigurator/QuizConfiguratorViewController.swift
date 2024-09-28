@@ -1,5 +1,5 @@
 //
-//  NewGameViewController.swift
+//  QuizConfiguratorViewController.swift
 //  Quiz Game
 //
 //  Created by Yasir on 07/09/24.
@@ -8,9 +8,9 @@
 import UIKit
 import Combine
 
-class NewGameViewController: UIViewController {
+class QuizConfiguratorViewController: UIViewController {
     
-    private let viewModel: NewGameViewModel
+    private let viewModel: QuizConfiguratorViewModel
     private var cancellables = Set<AnyCancellable>()
     
     private let scrollView = UIScrollView()
@@ -25,7 +25,7 @@ class NewGameViewController: UIViewController {
     private let categoryButton = UIButton(type: .system)
     private let startButton = UIButton(type: .system)
     
-    init(viewModel: NewGameViewModel) {
+    init(viewModel: QuizConfiguratorViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }

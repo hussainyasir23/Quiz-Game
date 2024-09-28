@@ -140,6 +140,7 @@ class HomeViewController: UIViewController {
         let quizConfiguratorViewController = QuizConfiguratorViewController(viewModel: quizConfiguratorViewModel)
         
         FeedbackManager.triggerImpactFeedback(of: .light)
+        SoundEffectManager.shared.playSound(.select)
         navigationController?.pushViewController(quizConfiguratorViewController, animated: true)
     }
     

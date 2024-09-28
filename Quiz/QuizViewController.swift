@@ -309,7 +309,7 @@ class QuizViewController: UIViewController {
         case .gameOver:
             FeedbackManager.triggerNotificationFeedback(of: .warning)
         case .timerTick:
-            FeedbackManager.triggerImpactFeedback(of: .light)
+            FeedbackManager.triggerImpactFeedback(of: .medium)
         }
     }
     

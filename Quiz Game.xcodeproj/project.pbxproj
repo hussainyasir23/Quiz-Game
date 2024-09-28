@@ -108,12 +108,12 @@
 			path = OptionSheet;
 			sourceTree = "<group>";
 		};
-		542F7AC82CA8186700F9921E /* Extensions */ = {
+		542F7AC82CA8186700F9921E /* Utility */ = {
 			isa = PBXGroup;
 			children = (
 				542F7AC92CA8187900F9921E /* String+Extension.swift */,
 			);
-			path = Extensions;
+			path = Utility;
 			sourceTree = "<group>";
 		};
 		548B58692C8C43A40094488B /* AppDelegate */ = {
@@ -198,7 +198,7 @@
 		54EBF7552680AC1600A77A5E = {
 			isa = PBXGroup;
 			children = (
-				542F7AC82CA8186700F9921E /* Extensions */,
+				542F7AC82CA8186700F9921E /* Utility */,
 				54285B452C8F4B9A00DFA14B /* Styling */,
 				542F7ABF2CA7D4FF00F9921E /* OptionSheet */,
 				542F7AB32CA6F40F00F9921E /* Settings */,

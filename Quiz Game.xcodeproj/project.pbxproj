@@ -177,13 +177,13 @@
 			path = QuizConfigurator;
 			sourceTree = "<group>";
 		};
-		548B58942C8C59480094488B /* QuizView */ = {
+		548B58942C8C59480094488B /* Quiz */ = {
 			isa = PBXGroup;
 			children = (
 				548B58952C8C59630094488B /* GameViewModel.swift */,
 				548B58972C8C59CB0094488B /* GameViewController.swift */,
 			);
-			path = QuizView;
+			path = Quiz;
 			sourceTree = "<group>";
 		};
 		548B58992C8C61D40094488B /* Results */ = {
@@ -203,7 +203,7 @@
 				542F7ABF2CA7D4FF00F9921E /* OptionSheet */,
 				542F7AB32CA6F40F00F9921E /* Settings */,
 				548B58992C8C61D40094488B /* Results */,
-				548B58942C8C59480094488B /* QuizView */,
+				548B58942C8C59480094488B /* Quiz */,
 				548B588B2C8C53AC0094488B /* QuizConfigurator */,
 				548B586A2C8C43BA0094488B /* Home */,
 				548B58802C8C4F9B0094488B /* QuizService */,

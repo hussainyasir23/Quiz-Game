@@ -27,7 +27,7 @@ class QuizConfiguratorViewController: UIViewController {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.alignment = .center
-        stackView.spacing = Styling.standardPadding
+        stackView.spacing = 32
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -159,11 +159,11 @@ class QuizConfiguratorViewController: UIViewController {
     private func setupStackView() {
         scrollView.addSubview(stackView)
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: Styling.standardPadding),
-            stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: Styling.standardPadding),
-            stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -Styling.standardPadding),
-            stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -Styling.standardPadding),
-            stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -2 * Styling.standardPadding)
+            stackView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 32),
+            stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 32),
+            stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -32),
+            stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -32),
+            stackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -64)
         ])
     }
     
@@ -191,7 +191,7 @@ class QuizConfiguratorViewController: UIViewController {
         
         let contentStack = UIStackView()
         contentStack.axis = .vertical
-        contentStack.spacing = Styling.standardPadding / 2
+        contentStack.spacing = 16
         contentStack.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
         contentStack.isLayoutMarginsRelativeArrangement = true
         
@@ -223,7 +223,7 @@ class QuizConfiguratorViewController: UIViewController {
     private func setupQuestionCountControl() -> UIStackView {
         let controlStack = UIStackView()
         controlStack.axis = .vertical
-        controlStack.spacing = Styling.standardPadding / 4
+        controlStack.spacing = 8
         
         questionCountLabel.text = "Number of Questions: \(viewModel.selectedQuestionCount)"
         questionCountLabel.textAlignment = .center

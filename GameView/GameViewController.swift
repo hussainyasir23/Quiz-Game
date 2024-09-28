@@ -14,11 +14,53 @@ class GameViewController: UIViewController {
     private let viewModel: GameViewModel
     private var cancellables: Set<AnyCancellable> = []
     
-    private let questionLabel = UILabel()
-    private let answerStackView = UIStackView()
-    private let scoreLabel = UILabel()
-    private let timerLabel = UILabel()
-    private let progressView = UIProgressView()
+    private let questionLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.textAlignment = .left
+        label.font = UIFont.preferredFont(forTextStyle: .title2)
+        label.adjustsFontForContentSizeCategory = true
+        label.textColor = .label
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let answerStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 12
+        stackView.distribution = .fillEqually
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
+    private let scoreLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .left
+        label.font = UIFont.preferredFont(forTextStyle: .subheadline)
+        label.adjustsFontForContentSizeCategory = true
+        label.textColor = .secondaryLabel
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let timerLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .right
+        label.font = UIFont.preferredFont(forTextStyle: .subheadline)
+        label.adjustsFontForContentSizeCategory = true
+        label.textColor = .secondaryLabel
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let progressView: UIProgressView = {
+        let progressView = UIProgressView(progressViewStyle: .bar)
+        progressView.progressTintColor = .systemBlue
+        progressView.trackTintColor = .systemGray5
+        progressView.translatesAutoresizingMaskIntoConstraints = false
+        return progressView
+    }()
     
     private var audioPlayer: AVAudioPlayer?
     private enum SystemSoundName: String {
@@ -47,69 +89,32 @@ class GameViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = Styling.primaryBackgroundColor
-        
+        view.backgroundColor = .systemBackground
         [questionLabel, answerStackView, scoreLabel, timerLabel, progressView].forEach {
             view.addSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
         }
-        
-        setupQuestionLabel()
-        setupAnswerStackView()
-        setupScoreLabel()
-        setupTimerLabel()
-        setupProgressView()
         setupConstraints()
-    }
-    
-    private func setupQuestionLabel() {
-        questionLabel.numberOfLines = 0
-        questionLabel.textAlignment = .left
-        questionLabel.font = Styling.titleFont
-        questionLabel.textColor = Styling.primaryTextColor
-    }
-    
-    private func setupAnswerStackView() {
-        answerStackView.axis = .vertical
-        answerStackView.spacing = Styling.standardPadding / 1.5
-        answerStackView.distribution = .fillEqually
-    }
-    
-    private func setupScoreLabel() {
-        scoreLabel.textAlignment = .left
-        scoreLabel.font = Styling.bodyFont
-        scoreLabel.textColor = Styling.primaryTextColor
-    }
-    
-    private func setupTimerLabel() {
-        timerLabel.textAlignment = .right
-        timerLabel.font = Styling.bodyFont
-        timerLabel.textColor = Styling.primaryTextColor
-    }
-    
-    private func setupProgressView() {
-        progressView.progressTintColor = Styling.primaryTextColor.withAlphaComponent(0.5)
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            questionLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Styling.standardPadding),
-            questionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Styling.standardPadding),
-            questionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Styling.standardPadding),
-            
-            answerStackView.topAnchor.constraint(equalTo: questionLabel.bottomAnchor, constant: Styling.standardPadding),
-            answerStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Styling.standardPadding),
-            answerStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Styling.standardPadding),
-            
-            scoreLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Styling.standardPadding),
-            scoreLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Styling.standardPadding),
-            
-            timerLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Styling.standardPadding),
-            timerLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Styling.standardPadding),
-            
+            progressView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             progressView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             progressView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            progressView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
+            
+            questionLabel.topAnchor.constraint(equalTo: progressView.bottomAnchor, constant: 20),
+            questionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            questionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            
+            answerStackView.topAnchor.constraint(equalTo: questionLabel.bottomAnchor, constant: 20),
+            answerStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            answerStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            
+            scoreLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            scoreLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            
+            timerLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            timerLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
         ])
     }
     
@@ -132,7 +137,6 @@ class GameViewController: UIViewController {
             target: self,
             action: #selector(exitGameTapped)
         )
-        navigationController?.navigationBar.tintColor = Styling.primaryTextColor
     }
     
     @objc private func exitGameTapped() {
@@ -186,9 +190,9 @@ class GameViewController: UIViewController {
             .sink { [weak self] shouldPlay in
                 if shouldPlay {
                     self?.playSound(.timerTick)
-                    self?.timerLabel.textColor = .red
+                    self?.timerLabel.textColor = .systemRed
                 } else {
-                    self?.timerLabel.textColor = Styling.primaryTextColor
+                    self?.timerLabel.textColor = .secondaryLabel
                 }
             }
             .store(in: &cancellables)
@@ -216,11 +220,12 @@ class GameViewController: UIViewController {
             let button = UIButton(type: .system)
             button.setTitle(answer, for: .normal)
             button.addTarget(self, action: #selector(answerSelected(_:)), for: .touchUpInside)
-            button.backgroundColor = Styling.primaryColor
-            button.setTitleColor(Styling.primaryTextColor, for: .normal)
-            button.layer.cornerRadius = Styling.cornerRadius
-            button.titleLabel?.font = Styling.bodyFont
-            button.heightAnchor.constraint(equalTo: button.widthAnchor, multiplier: 0.15).isActive = true
+            button.backgroundColor = .systemBlue
+            button.setTitleColor(.white, for: .normal)
+            button.layer.cornerRadius = 10
+            button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
+            button.titleLabel?.adjustsFontForContentSizeCategory = true
+            button.heightAnchor.constraint(greaterThanOrEqualToConstant: 50).isActive = true
             answerStackView.addArrangedSubview(button)
         }
         
@@ -250,14 +255,14 @@ class GameViewController: UIViewController {
     private func highlightAnswers(selectedButton: UIButton, isCorrect: Bool) {
         let correctAnswer = viewModel.currentQuestion?.correctAnswer
         UIView.animate(withDuration: 0.3, animations: {
-            selectedButton.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
-            selectedButton.backgroundColor = isCorrect ? .green : .red
+            selectedButton.transform = CGAffineTransform(scaleX: 1.05, y: 1.05)
+            selectedButton.backgroundColor = isCorrect ? .systemGreen : .systemRed
             if !isCorrect {
                 self.answerStackView.arrangedSubviews.forEach { view in
                     if let button = view as? UIButton,
                        button.titleLabel?.text == correctAnswer {
-                        button.backgroundColor = .green
-                        button.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+                        button.backgroundColor = .systemGreen
+                        button.transform = CGAffineTransform(scaleX: 1.05, y: 1.05)
                     }
                 }
             }
@@ -266,7 +271,7 @@ class GameViewController: UIViewController {
                 self.answerStackView.arrangedSubviews.forEach { view in
                     if let button = view as? UIButton {
                         button.transform = .identity
-                        button.backgroundColor = Styling.primaryColor
+                        button.backgroundColor = .systemBlue
                     }
                 }
             }

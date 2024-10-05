@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 class QuestionDetailViewController: UIViewController {
     
@@ -131,18 +132,15 @@ class QuestionDetailViewController: UIViewController {
             userAnswerLabel.text = "Your Answer: \(selectedAnswer)"
             if userAnswer.isCorrect {
                 userAnswerLabel.textColor = .systemGreen
-                resultImageView.image = UIImage(systemName: "checkmark.circle.fill")
-                resultImageView.tintColor = .systemGreen
             } else {
                 userAnswerLabel.textColor = .systemRed
-                resultImageView.image = UIImage(systemName: "xmark.circle.fill")
-                resultImageView.tintColor = .systemRed
             }
         } else {
             userAnswerLabel.text = "You've not answered this question."
             userAnswerLabel.textColor = .secondaryLabel
-            resultImageView.image = UIImage(systemName: "hourglass.bottomhalf.fill")
-            resultImageView.tintColor = .systemOrange
         }
+        
+        resultImageView.image = userAnswer.resultImage
+        resultImageView.tintColor = userAnswer.resultTintColor
     }
 }

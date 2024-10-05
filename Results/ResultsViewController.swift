@@ -235,25 +235,9 @@ extension ResultsViewController: UITableViewDelegate, UITableViewDataSource {
         cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .body)
         cell.textLabel?.adjustsFontForContentSizeCategory = true
         
-        let accessoryImage: UIImage?
-        let tintColor: UIColor
-        
-        if userAnswer.isAnswered {
-            if userAnswer.isCorrect {
-                accessoryImage = UIImage(systemName: "checkmark.circle.fill")
-                tintColor = .systemGreen
-            } else {
-                accessoryImage = UIImage(systemName: "xmark.circle.fill")
-                tintColor = .systemRed
-            }
-        } else {
-            accessoryImage = UIImage(systemName: "hourglass.bottomhalf.fill")
-            tintColor = .systemOrange
-        }
-        
-        if let image = accessoryImage {
+        if let image = userAnswer.resultImage {
             let accessoryImageView = UIImageView(image: image)
-            accessoryImageView.tintColor = tintColor
+            accessoryImageView.tintColor = userAnswer.resultTintColor
             accessoryImageView.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
             cell.accessoryView = accessoryImageView
         } else {

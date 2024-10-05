@@ -17,10 +17,11 @@ class QuizViewModel: ObservableObject {
     @Published private(set) var timeRemaining: Int = 15
     @Published private(set) var shouldPlayTimerSound: Bool = false
     
-    private var quiz: Quiz
+    private let quiz: Quiz
     private var timer: AnyCancellable?
     private var startTime: Date?
     private(set) var totalTime: TimeInterval = 0
+    private(set) var userAnswers: [UserAnswer] = []
     
     var totalQuestions: Int {
         return quiz.questions.count
@@ -60,9 +61,12 @@ class QuizViewModel: ObservableObject {
     
     func answerSelected(_ answer: String?) {
         timer?.cancel()
-        if let currentQuestion = currentQuestion,
-           answer == currentQuestion.correctAnswer {
-            score += 1
+        if let currentQuestion = currentQuestion {
+            let userAnswer = UserAnswer(question: currentQuestion, selectedAnswer: answer)
+            userAnswers.append(userAnswer)
+            if userAnswer.isCorrect {
+                score += 1
+            }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
             self?.setNextQuestion()

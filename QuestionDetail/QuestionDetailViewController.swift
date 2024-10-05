@@ -47,7 +47,7 @@ class QuestionDetailViewController: UIViewController {
     private let correctAnswerLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
-        label.font = UIFont.preferredFont(forTextStyle: .subheadline)
+        label.font = UIFont.preferredFont(forTextStyle: .body)
         label.adjustsFontForContentSizeCategory = true
         return label
     }()
@@ -55,7 +55,7 @@ class QuestionDetailViewController: UIViewController {
     private let userAnswerLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
-        label.font = UIFont.preferredFont(forTextStyle: .subheadline)
+        label.font = UIFont.preferredFont(forTextStyle: .body)
         label.adjustsFontForContentSizeCategory = true
         return label
     }()
@@ -85,6 +85,7 @@ class QuestionDetailViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .systemBackground
         title = "Question Details"
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -92,7 +93,7 @@ class QuestionDetailViewController: UIViewController {
         
         let stackView = UIStackView(arrangedSubviews: [questionLabel, correctAnswerLabel, userAnswerLabel, resultImageView])
         stackView.axis = .vertical
-        stackView.spacing = 16
+        stackView.spacing = 24
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         cardView.addSubview(stackView)

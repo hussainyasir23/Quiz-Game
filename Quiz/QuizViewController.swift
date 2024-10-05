@@ -195,7 +195,7 @@ class QuizViewController: UIViewController {
             .sink { [weak self] isGameOver in
                 if isGameOver {
                     self?.play(.gameOver)
-                    self?.showGameOverAlert()
+                    self?.showResults()
                 }
             }
             .store(in: &cancellables)
@@ -313,12 +313,9 @@ class QuizViewController: UIViewController {
         }
     }
     
-    private func showGameOverAlert() {
-        let resultsVC = ResultsViewController(
-            score: viewModel.score,
-            totalQuestions: viewModel.totalQuestions,
-            totalTime: viewModel.totalTime
-        )
-        navigationController?.pushViewController(resultsVC, animated: true)
+    private func showResults() {
+        let resultsViewModel = ResultsViewModel(userAnswers: viewModel.userAnswers, totalTime: viewModel.totalTime)
+        let resultsViewController = ResultsViewController(viewModel: resultsViewModel)
+        navigationController?.pushViewController(resultsViewController, animated: true)
     }
 }

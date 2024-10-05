@@ -6,23 +6,86 @@
 //
 
 import UIKit
+import SwiftUI
 
 class ResultsViewController: UIViewController {
     
-    private let scoreLabel = UILabel()
-    private let accuracyLabel = UILabel()
-    private let timeLabel = UILabel()
-    private let highScoreLabel = UILabel()
-    private let playAgainButton = UIButton(type: .system)
+    // MARK: - Properties
     
-    private let score: Int
-    private let totalQuestions: Int
-    private let totalTime: TimeInterval
+    private let viewModel: ResultsViewModel
     
-    init(score: Int, totalQuestions: Int, totalTime: TimeInterval) {
-        self.score = score
-        self.totalQuestions = totalQuestions
-        self.totalTime = totalTime
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+    
+    private lazy var contentView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 24
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
+    private lazy var scoreLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 48, weight: .bold)
+        label.textAlignment = .center
+        label.textColor = .label
+        return label
+    }()
+    
+    private lazy var messageLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.preferredFont(forTextStyle: .title2)
+        label.textAlignment = .center
+        label.textColor = .secondaryLabel
+        label.numberOfLines = 0
+        return label
+    }()
+    
+    private lazy var questionsTableView: UITableView = {
+        let tableView = UITableView(frame: .zero, style: .insetGrouped)
+        tableView.backgroundColor = .systemGroupedBackground
+        tableView.layer.cornerRadius = 10
+        tableView.allowsSelection = false
+        tableView.showsVerticalScrollIndicator = false
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "QuestionCell")
+        return tableView
+    }()
+    
+    private lazy var playAgainButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Play Again", for: .normal)
+        button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
+        button.backgroundColor = .systemBlue
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 10
+        button.addTarget(self, action: #selector(playAgainTapped), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var shareButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Share Score", for: .normal)
+        button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
+        button.backgroundColor = .systemGreen
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 10
+        button.addTarget(self, action: #selector(shareTapped), for: .touchUpInside)
+        return button
+    }()
+    
+    private var confettiHostingController: UIHostingController<ConfettiView>?
+    
+    // MARK: - Initialization
+    
+    init(viewModel: ResultsViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -30,75 +93,147 @@ class ResultsViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Lifecycle Methods
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        checkHighScore()
+        configureData()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        revealScore()
+    }
+    
+    // MARK: - UI Setup
     
     private func setupUI() {
-        view.backgroundColor = Styling.primaryBackgroundColor
-        navigationController?.setNavigationBarHidden(true, animated: false)
+        view.backgroundColor = .systemBackground
+        navigationItem.hidesBackButton = true
         
-        let stackView = UIStackView(arrangedSubviews: [scoreLabel, accuracyLabel, timeLabel, highScoreLabel, playAgainButton])
-        stackView.axis = .vertical
-        stackView.spacing = Styling.standardPadding
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
         
-        view.addSubview(stackView)
-        
-        NSLayoutConstraint.activate([
-            stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Styling.standardPadding),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Styling.standardPadding)
-        ])
-        
-        setupLabels()
-        setupPlayAgainButton()
-    }
-    
-    private func setupLabels() {
-        scoreLabel.text = "Score: \(score)/\(totalQuestions)"
-        scoreLabel.textAlignment = .center
-        
-        let accuracy = Double(score) / Double(totalQuestions) * 100
-        accuracyLabel.text = String(format: "Accuracy: %.1f%%", accuracy)
-        accuracyLabel.textAlignment = .center
-        
-        timeLabel.text = String(format: "Total Time: %.1f seconds", totalTime)
-        timeLabel.textAlignment = .center
-        
-        highScoreLabel.textAlignment = .center
-        
-        [scoreLabel, accuracyLabel, timeLabel, highScoreLabel].forEach { label in
-            label.font = Styling.bodyFont
-            label.textColor = Styling.primaryTextColor
+        [scoreLabel, messageLabel, questionsTableView, playAgainButton, shareButton].forEach {
+            $0.alpha = 0
+            contentView.addArrangedSubview($0)
         }
         
-        scoreLabel.font = Styling.titleFont
+        setupConstraints()
     }
     
-    private func setupPlayAgainButton() {
-        playAgainButton.setTitle("Play Again", for: .normal)
-        playAgainButton.addTarget(self, action: #selector(playAgainTapped), for: .touchUpInside)
-        playAgainButton.backgroundColor = Styling.primaryColor
-        playAgainButton.setTitleColor(Styling.primaryTextColor, for: .normal)
-        playAgainButton.layer.cornerRadius = Styling.cornerRadius
-        playAgainButton.titleLabel?.font = Styling.titleFont
-        playAgainButton.heightAnchor.constraint(equalTo: playAgainButton.widthAnchor, multiplier: 0.15).isActive = true
+    private func setupConstraints() {
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 20),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -20),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -40),
+            contentView.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.heightAnchor),
+            
+            questionsTableView.heightAnchor.constraint(greaterThanOrEqualToConstant: 0),
+            
+            playAgainButton.heightAnchor.constraint(equalToConstant: 50),
+            shareButton.heightAnchor.constraint(equalToConstant: 50)
+        ])
     }
+    
+    // MARK: - Configure Data
+    
+    private func configureData() {
+        scoreLabel.text = viewModel.scoreText
+        messageLabel.text = viewModel.messageText
+    }
+    
+    // MARK: - Animations
+    
+    private func revealScore() {
+        if viewModel.shouldShowConfetti {
+            showConfetti()
+        } else {
+            animateScoreAppearance()
+        }
+    }
+    
+    private func showConfetti() {
+        let confettiView = ConfettiView { [weak self] in
+            self?.removeConfetti()
+            self?.animateScoreAppearance()
+        }
+        let hostingController = UIHostingController(rootView: confettiView)
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        addChild(hostingController)
+        view.addSubview(hostingController.view)
+        hostingController.didMove(toParent: self)
+        
+        NSLayoutConstraint.activate([
+            hostingController.view.topAnchor.constraint(equalTo: view.topAnchor),
+            hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            hostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+        
+        self.confettiHostingController = hostingController
+    }
+    
+    private func removeConfetti() {
+        confettiHostingController?.willMove(toParent: nil)
+        confettiHostingController?.view.removeFromSuperview()
+        confettiHostingController?.removeFromParent()
+        confettiHostingController = nil
+    }
+    
+    private func animateScoreAppearance() {
+        UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseInOut) { [weak self] in
+            self?.view.backgroundColor = .secondarySystemGroupedBackground
+            self?.scoreLabel.transform = .identity
+            self?.scoreLabel.alpha = 1
+        } completion: { _ in
+            UIView.animate(withDuration: 0.6, delay: 0, options: .curveEaseInOut) { [weak self] in
+                self?.messageLabel.alpha = 1
+            } completion: { _ in
+                UIView.animate(withDuration: 0.6, delay: 0, options: .curveEaseInOut) { [weak self] in
+                    self?.questionsTableView.alpha = 1
+                    self?.playAgainButton.alpha = 1
+                    self?.shareButton.alpha = 1
+                }
+            }
+        }
+    }
+    
+    // MARK: - Actions
     
     @objc private func playAgainTapped() {
         navigationController?.popToRootViewController(animated: true)
     }
     
-    private func checkHighScore() {
-        let highScore = HighScoreManager.shared.getHighScore()
-        if score > highScore {
-            HighScoreManager.shared.setHighScore(score)
-            highScoreLabel.text = "New High Score: \(score)!"
-        } else {
-            highScoreLabel.text = "High Score: \(highScore)"
-        }
+    @objc private func shareTapped() {
+        let activityViewController = UIActivityViewController(activityItems: [viewModel.shareMessage], applicationActivities: nil)
+        present(activityViewController, animated: true, completion: nil)
+    }
+}
+
+// MARK: - UITableViewDelegate & UITableViewDataSource
+
+extension ResultsViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return viewModel.numberOfQuestions
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "QuestionCell", for: indexPath)
+        let userAnswer = viewModel.userAnswer(at: indexPath.row)
+        cell.textLabel?.text = userAnswer.question.question
+        cell.textLabel?.numberOfLines = 2
+        cell.accessoryType = userAnswer.isCorrect ? .checkmark : .none
+        cell.tintColor = userAnswer.isCorrect ? .systemGreen : .systemRed
+        return cell
     }
 }

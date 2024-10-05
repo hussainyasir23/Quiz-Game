@@ -149,6 +149,14 @@
 			path = ConfettiView;
 			sourceTree = "<group>";
 		};
+		547CD7142CB1C56400B69458 /* QuestionDetail */ = {
+			isa = PBXGroup;
+			children = (
+				547CD7122CB1C1B000B69458 /* QuestionDetailViewController.swift */,
+			);
+			path = QuestionDetail;
+			sourceTree = "<group>";
+		};
 		548B58692C8C43A40094488B /* AppDelegate */ = {
 			isa = PBXGroup;
 			children = (
@@ -224,7 +232,6 @@
 			children = (
 				547CD7102CB1727E00B69458 /* ResultsViewModel.swift */,
 				548B589A2C8C62170094488B /* ResultsViewController.swift */,
-				547CD7122CB1C1B000B69458 /* QuestionDetailViewController.swift */,
 			);
 			path = Results;
 			sourceTree = "<group>";
@@ -236,6 +243,7 @@
 				547CD70B2CB1682900B69458 /* ConfettiView */,
 				542F7ABF2CA7D4FF00F9921E /* OptionSheet */,
 				542F7AB32CA6F40F00F9921E /* Settings */,
+				547CD7142CB1C56400B69458 /* QuestionDetail */,
 				548B58992C8C61D40094488B /* Results */,
 				548B58942C8C59480094488B /* Quiz */,
 				548B588B2C8C53AC0094488B /* QuizConfigurator */,

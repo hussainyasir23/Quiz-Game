@@ -318,7 +318,6 @@ class QuizConfiguratorViewController: UIViewController {
         viewModel.selectedQuestionCount = count
         questionCountLabel.text = "Number of Questions: \(count)"
         FeedbackManager.triggerImpactFeedback(of: .light)
-        SoundEffectManager.shared.playSound(.select)
     }
     
     @objc private func categoryTapped() {

@@ -49,7 +49,6 @@ class ResultsViewController: UIViewController {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.backgroundColor = .systemGroupedBackground
         tableView.layer.cornerRadius = 10
-        tableView.allowsSelection = false
         tableView.showsVerticalScrollIndicator = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.delegate = self
@@ -230,10 +229,44 @@ extension ResultsViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "QuestionCell", for: indexPath)
         let userAnswer = viewModel.userAnswer(at: indexPath.row)
+        
         cell.textLabel?.text = userAnswer.question.question
         cell.textLabel?.numberOfLines = 2
-        cell.accessoryType = userAnswer.isCorrect ? .checkmark : .none
-        cell.tintColor = userAnswer.isCorrect ? .systemGreen : .systemRed
+        cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .body)
+        cell.textLabel?.adjustsFontForContentSizeCategory = true
+        
+        let accessoryImage: UIImage?
+        let tintColor: UIColor
+        
+        if userAnswer.isAnswered {
+            if userAnswer.isCorrect {
+                accessoryImage = UIImage(systemName: "checkmark.circle.fill")
+                tintColor = .systemGreen
+            } else {
+                accessoryImage = UIImage(systemName: "xmark.circle.fill")
+                tintColor = .systemRed
+            }
+        } else {
+            accessoryImage = UIImage(systemName: "hourglass.bottomhalf.fill")
+            tintColor = .systemOrange
+        }
+        
+        if let image = accessoryImage {
+            let accessoryImageView = UIImageView(image: image)
+            accessoryImageView.tintColor = tintColor
+            accessoryImageView.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+            cell.accessoryView = accessoryImageView
+        } else {
+            cell.accessoryView = nil
+        }
+        
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let userAnswer = viewModel.userAnswer(at: indexPath.row)
+        let questionDetailViewController = QuestionDetailViewController(userAnswer: userAnswer)
+        navigationController?.pushViewController(questionDetailViewController, animated: true)
     }
 }

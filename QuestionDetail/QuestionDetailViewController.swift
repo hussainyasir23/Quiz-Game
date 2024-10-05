@@ -128,19 +128,25 @@ class QuestionDetailViewController: UIViewController {
         questionLabel.text = userAnswer.question.question
         correctAnswerLabel.text = "Correct Answer: \(userAnswer.question.correctAnswer)"
         
-        if let selectedAnswer = userAnswer.selectedAnswer {
-            userAnswerLabel.text = "Your Answer: \(selectedAnswer)"
-            if userAnswer.isCorrect {
-                userAnswerLabel.textColor = .systemGreen
-            } else {
-                userAnswerLabel.textColor = .systemRed
+        if userAnswer.isAnswered {
+            if let selectedAnswer = userAnswer.selectedAnswer {
+                userAnswerLabel.text = "Your Answer: \(selectedAnswer)"
             }
         } else {
             userAnswerLabel.text = "You've not answered this question."
-            userAnswerLabel.textColor = .secondaryLabel
         }
         
+        userAnswerLabel.textColor = userAnswer.resultTintColor
         resultImageView.image = userAnswer.resultImage
         resultImageView.tintColor = userAnswer.resultTintColor
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        UIView.animate(withDuration: 0.3) {
+            self.resultImageView.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+        } completion: { _ in
+            self.resultImageView.transform = CGAffineTransform.identity
+            FeedbackManager.triggerNotificationFeedback(of: self.userAnswer.isCorrect ? .success : .error)
+        }
     }
 }

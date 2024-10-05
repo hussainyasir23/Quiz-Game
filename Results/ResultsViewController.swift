@@ -230,19 +230,17 @@ extension ResultsViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "QuestionCell", for: indexPath)
         let userAnswer = viewModel.userAnswer(at: indexPath.row)
         
-        cell.textLabel?.text = userAnswer.question.question
-        cell.textLabel?.numberOfLines = 2
-        cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .body)
-        cell.textLabel?.adjustsFontForContentSizeCategory = true
+        var content = cell.defaultContentConfiguration()
         
-        if let image = userAnswer.resultImage {
-            let accessoryImageView = UIImageView(image: image)
-            accessoryImageView.tintColor = userAnswer.resultTintColor
-            accessoryImageView.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
-            cell.accessoryView = accessoryImageView
-        } else {
-            cell.accessoryView = nil
-        }
+        content.text = userAnswer.question.question
+        content.textProperties.numberOfLines = 2
+        content.textProperties.font = UIFont.preferredFont(forTextStyle: .body)
+        content.textProperties.adjustsFontForContentSizeCategory = true
+        
+        content.image = userAnswer.resultImage
+        content.imageProperties.tintColor = userAnswer.resultTintColor
+        
+        cell.contentConfiguration = content
         
         return cell
     }

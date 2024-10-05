@@ -23,7 +23,7 @@ class ResultsViewController: UIViewController {
     private lazy var contentView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.spacing = 20
+        stackView.spacing = 24
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -47,6 +47,10 @@ class ResultsViewController: UIViewController {
     
     private lazy var questionsTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
+        tableView.backgroundColor = .systemGroupedBackground
+        tableView.layer.cornerRadius = 10
+        tableView.allowsSelection = false
+        tableView.showsVerticalScrollIndicator = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.delegate = self
         tableView.dataSource = self
@@ -124,15 +128,16 @@ class ResultsViewController: UIViewController {
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
             
             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 20),
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -20),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -40),
+            contentView.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.heightAnchor),
             
-            questionsTableView.heightAnchor.constraint(greaterThanOrEqualToConstant: 300),
+            questionsTableView.heightAnchor.constraint(greaterThanOrEqualToConstant: 0),
             
             playAgainButton.heightAnchor.constraint(equalToConstant: 50),
             shareButton.heightAnchor.constraint(equalToConstant: 50)
@@ -186,22 +191,18 @@ class ResultsViewController: UIViewController {
     }
     
     private func animateScoreAppearance() {
-        UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseInOut) { [weak self] in
+        UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseInOut) { [weak self] in
+            self?.view.backgroundColor = .secondarySystemGroupedBackground
+            self?.scoreLabel.transform = .identity
             self?.scoreLabel.alpha = 1
         } completion: { _ in
-            UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseInOut) { [weak self] in
+            UIView.animate(withDuration: 0.6, delay: 0, options: .curveEaseInOut) { [weak self] in
                 self?.messageLabel.alpha = 1
             } completion: { _ in
-                UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseInOut) { [weak self] in
+                UIView.animate(withDuration: 0.6, delay: 0, options: .curveEaseInOut) { [weak self] in
                     self?.questionsTableView.alpha = 1
-                } completion: { _ in
-                    UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseInOut) { [weak self] in
-                        self?.playAgainButton.alpha = 1
-                    } completion: { _ in
-                        UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseInOut) { [weak self] in
-                            self?.shareButton.alpha = 1
-                        }
-                    }
+                    self?.playAgainButton.alpha = 1
+                    self?.shareButton.alpha = 1
                 }
             }
         }

@@ -10,6 +10,7 @@ import SwiftUI
 
 struct ConfettiView: View {
     
+    @State private var opacity: Double = 1.0
     let onCompletion: () -> Void
     
     var body: some View {
@@ -18,8 +19,12 @@ struct ConfettiView: View {
                 ConfettiPiece()
             }
         }
+        .opacity(opacity)
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    opacity = 0.5
+                }
                 onCompletion()
             }
         }

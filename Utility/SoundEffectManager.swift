@@ -13,10 +13,14 @@ final class SoundEffectManager {
     
     static let shared = SoundEffectManager()
     
-    private var audioPlayers: [SoundEffect: [AVAudioPlayer]] = [:]
-    private var volume: Float = 1.0
-    private let maxConcurrentPlayers = 3
+    private(set) var isSoundEnabled: Bool = true
+    private(set) var volume: Float = 1.0
+    
     private let audioQueue = DispatchQueue(label: "com.soundEffectManager.audioQueue", attributes: .concurrent)
+    private let maxConcurrentPlayers = 3
+    private var audioPlayers: [SoundEffect: [AVAudioPlayer]] = [:]
+    
+    // MARK: - Initialization
     
     private init() {
         setupAudioSession()
@@ -40,8 +44,11 @@ final class SoundEffectManager {
     
     // MARK: - Public Methods
     
-    func playSound(_ sound: SoundEffect) {
+    func play(sound: SoundEffect) {
         audioQueue.async {
+            guard self.isSoundEnabled else {
+                return
+            }
             if let availablePlayer = self.getAvailablePlayer(for: sound) {
                 availablePlayer.volume = self.volume
                 availablePlayer.play()
@@ -51,7 +58,7 @@ final class SoundEffectManager {
         }
     }
     
-    func stopSound(_ sound: SoundEffect) {
+    func stop(sound: SoundEffect) {
         audioQueue.async {
             self.audioPlayers[sound]?.forEach { $0.stop() }
         }
@@ -60,6 +67,15 @@ final class SoundEffectManager {
     func stopAllSounds() {
         audioQueue.async {
             self.audioPlayers.values.flatMap { $0 }.forEach { $0.stop() }
+        }
+    }
+    
+    func setSoundEnabled(_ enabled: Bool) {
+        audioQueue.async(flags: .barrier) {
+            self.isSoundEnabled = enabled
+            if !enabled {
+                self.stopAllSounds()
+            }
         }
     }
     
@@ -109,17 +125,14 @@ final class SoundEffectManager {
             player.volume = volume
             
             audioQueue.async(flags: .barrier) {
-                if self.audioPlayers[sound] == nil {
-                    self.audioPlayers[sound] = []
-                }
-                
-                if var players = self.audioPlayers[sound], players.count < self.maxConcurrentPlayers {
+                var players = self.audioPlayers[sound] ?? []
+                if players.count < self.maxConcurrentPlayers {
                     players.append(player)
-                    self.audioPlayers[sound] = players
                 } else {
-                    self.audioPlayers[sound]?.removeFirst()
-                    self.audioPlayers[sound]?.append(player)
+                    players.removeFirst()
+                    players.append(player)
                 }
+                self.audioPlayers[sound] = players
             }
             
             return player
@@ -129,4 +142,3 @@ final class SoundEffectManager {
         }
     }
 }
-

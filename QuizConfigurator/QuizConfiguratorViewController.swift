@@ -326,7 +326,7 @@ class QuizConfiguratorViewController: UIViewController {
             if let selectedCategory = self?.viewModel.categories.first(where: { $0.displayName == option.title }) {
                 self?.viewModel.selectedCategory = selectedCategory
                 FeedbackManager.triggerImpactFeedback(of: .light)
-                SoundEffectManager.shared.playSound(.select)
+                SoundEffectManager.shared.play(sound: .select)
             }
         }
         navigationController?.present(optionSheetViewController, animated: true)
@@ -334,7 +334,7 @@ class QuizConfiguratorViewController: UIViewController {
     
     private func animateSelection(_ control: UIView) {
         FeedbackManager.triggerImpactFeedback(of: .light)
-        SoundEffectManager.shared.playSound(.select)
+        SoundEffectManager.shared.play(sound: .select)
         UIView.animate(withDuration: 0.1, animations: {
             control.transform = CGAffineTransform(scaleX: 1.05, y: 1.05)
         }) { _ in
@@ -346,7 +346,7 @@ class QuizConfiguratorViewController: UIViewController {
     
     @objc private func beginQuizTapped() {
         FeedbackManager.triggerImpactFeedback(of: .light)
-        SoundEffectManager.shared.playSound(.select)
+        SoundEffectManager.shared.play(sound: .select)
         startLoadingState()
         viewModel.startQuiz()
             .receive(on: DispatchQueue.main)

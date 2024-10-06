@@ -22,6 +22,8 @@
 		547CD70F2CB1687E00B69458 /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547CD70E2CB1687E00B69458 /* ConfettiView.swift */; };
 		547CD7112CB1727E00B69458 /* ResultsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547CD7102CB1727E00B69458 /* ResultsViewModel.swift */; };
 		547CD7132CB1C1B000B69458 /* QuestionDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547CD7122CB1C1B000B69458 /* QuestionDetailViewController.swift */; };
+		547CD7162CB2798E00B69458 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547CD7152CB2798E00B69458 /* SettingsManager.swift */; };
+		547CD71B2CB29E5400B69458 /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547CD71A2CB29E5400B69458 /* WebViewController.swift */; };
 		548B586C2C8C43CB0094488B /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B586B2C8C43CB0094488B /* HomeViewModel.swift */; };
 		548B58762C8C4D870094488B /* Difficulty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B58752C8C4D870094488B /* Difficulty.swift */; };
 		548B58782C8C4DA10094488B /* QuestionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548B58772C8C4DA10094488B /* QuestionType.swift */; };
@@ -62,6 +64,8 @@
 		547CD70E2CB1687E00B69458 /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
 		547CD7102CB1727E00B69458 /* ResultsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsViewModel.swift; sourceTree = "<group>"; };
 		547CD7122CB1C1B000B69458 /* QuestionDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionDetailViewController.swift; sourceTree = "<group>"; };
+		547CD7152CB2798E00B69458 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
+		547CD71A2CB29E5400B69458 /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		548B586B2C8C43CB0094488B /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		548B58752C8C4D870094488B /* Difficulty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Difficulty.swift; sourceTree = "<group>"; };
 		548B58772C8C4DA10094488B /* QuestionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionType.swift; sourceTree = "<group>"; };
@@ -125,6 +129,7 @@
 				542F7ACC2CA836AC00F9921E /* FeedbackManager.swift */,
 				542F7AD52CA844F900F9921E /* SoundEffectManager.swift */,
 				548B589C2C8C635A0094488B /* HighScoreManager.swift */,
+				547CD7152CB2798E00B69458 /* SettingsManager.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -155,6 +160,14 @@
 				547CD7122CB1C1B000B69458 /* QuestionDetailViewController.swift */,
 			);
 			path = QuestionDetail;
+			sourceTree = "<group>";
+		};
+		547CD7192CB29E4200B69458 /* WebView */ = {
+			isa = PBXGroup;
+			children = (
+				547CD71A2CB29E5400B69458 /* WebViewController.swift */,
+			);
+			path = WebView;
 			sourceTree = "<group>";
 		};
 		548B58692C8C43A40094488B /* AppDelegate */ = {
@@ -242,6 +255,7 @@
 				542F7AC82CA8186700F9921E /* Utility */,
 				547CD70B2CB1682900B69458 /* ConfettiView */,
 				542F7ABF2CA7D4FF00F9921E /* OptionSheet */,
+				547CD7192CB29E4200B69458 /* WebView */,
 				542F7AB32CA6F40F00F9921E /* Settings */,
 				547CD7142CB1C56400B69458 /* QuestionDetail */,
 				548B58992C8C61D40094488B /* Results */,
@@ -354,8 +368,10 @@
 				547CD7112CB1727E00B69458 /* ResultsViewModel.swift in Sources */,
 				548B587D2C8C4E150094488B /* Question.swift in Sources */,
 				542F7AC52CA7D57500F9921E /* OptionSheetViewController.swift in Sources */,
+				547CD71B2CB29E5400B69458 /* WebViewController.swift in Sources */,
 				54EBF7622680AC1600A77A5E /* AppDelegate.swift in Sources */,
 				548B588A2C8C50DF0094488B /* SessionTokenResponse.swift in Sources */,
+				547CD7162CB2798E00B69458 /* SettingsManager.swift in Sources */,
 				547CD70F2CB1687E00B69458 /* ConfettiView.swift in Sources */,
 				548B58862C8C4FDD0094488B /* QuizServiceProtocol.swift in Sources */,
 				542F7AB52CA6F41F00F9921E /* SettingsViewController.swift in Sources */,

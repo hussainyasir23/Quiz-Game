@@ -13,6 +13,10 @@ class ResultsViewController: UIViewController {
     // MARK: - Properties
     
     private let viewModel: ResultsViewModel
+    private var isScoreRevealed = false
+    private var confettiHostingController: UIHostingController<ConfettiView>?
+    
+    // MARK: - UI Elements
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -24,6 +28,7 @@ class ResultsViewController: UIViewController {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.spacing = 24
+        stackView.alignment = .center
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -33,6 +38,7 @@ class ResultsViewController: UIViewController {
         label.font = UIFont.systemFont(ofSize: 48, weight: .bold)
         label.textAlignment = .center
         label.textColor = .label
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -42,6 +48,7 @@ class ResultsViewController: UIViewController {
         label.textAlignment = .center
         label.textColor = .secondaryLabel
         label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -58,28 +65,27 @@ class ResultsViewController: UIViewController {
     }()
     
     private lazy var playAgainButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Play Again", for: .normal)
-        button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
-        button.backgroundColor = .systemBlue
-        button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 10
+        let button = UIButton(configuration: .filled())
+        button.configuration?.title = "Play Again"
+        button.configuration?.cornerStyle = .large
+        button.configuration?.image = UIImage(systemName: "arrow.counterclockwise")
+        button.configuration?.imagePadding = 8
+        button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(playAgainTapped), for: .touchUpInside)
         return button
     }()
     
     private lazy var shareButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Share Score", for: .normal)
-        button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
-        button.backgroundColor = .systemGreen
-        button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 10
+        let button = UIButton(configuration: .filled())
+        button.configuration?.title = "Share Score"
+        button.configuration?.cornerStyle = .large
+        button.configuration?.image = UIImage(systemName: "square.and.arrow.up")
+        button.configuration?.imagePadding = 8
+        button.configuration?.baseBackgroundColor = .systemGreen
+        button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(shareTapped), for: .touchUpInside)
         return button
     }()
-    
-    private var confettiHostingController: UIHostingController<ConfettiView>?
     
     // MARK: - Initialization
     
@@ -96,7 +102,7 @@ class ResultsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
+        setupViews()
         configureData()
     }
     
@@ -107,7 +113,7 @@ class ResultsViewController: UIViewController {
     
     // MARK: - UI Setup
     
-    private func setupUI() {
+    private func setupViews() {
         view.backgroundColor = .systemBackground
         navigationItem.hidesBackButton = true
         
@@ -137,9 +143,13 @@ class ResultsViewController: UIViewController {
             contentView.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.heightAnchor),
             
             questionsTableView.heightAnchor.constraint(greaterThanOrEqualToConstant: 0),
+            questionsTableView.widthAnchor.constraint(equalTo: contentView.widthAnchor),
             
             playAgainButton.heightAnchor.constraint(equalToConstant: 50),
-            shareButton.heightAnchor.constraint(equalToConstant: 50)
+            playAgainButton.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.7),
+            
+            shareButton.heightAnchor.constraint(equalToConstant: 50),
+            shareButton.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.7)
         ])
     }
     
@@ -153,6 +163,9 @@ class ResultsViewController: UIViewController {
     // MARK: - Animations
     
     private func revealScore() {
+        guard !isScoreRevealed else {
+            return
+        }
         if viewModel.shouldShowConfetti {
             showConfetti()
         } else {
@@ -197,7 +210,8 @@ class ResultsViewController: UIViewController {
         } completion: { _ in
             UIView.animate(withDuration: 0.6, delay: 0, options: .curveEaseInOut) { [weak self] in
                 self?.messageLabel.alpha = 1
-            } completion: { _ in
+            } completion: { [weak self] _ in
+                self?.isScoreRevealed = true
                 UIView.animate(withDuration: 0.6, delay: 0, options: .curveEaseInOut) { [weak self] in
                     self?.questionsTableView.alpha = 1
                     self?.playAgainButton.alpha = 1
@@ -210,12 +224,16 @@ class ResultsViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func playAgainTapped() {
+        FeedbackManager.triggerImpactFeedback(of: .light)
+        SoundEffectManager.shared.play(sound: .select)
         navigationController?.popToRootViewController(animated: true)
     }
     
     @objc private func shareTapped() {
         let activityViewController = UIActivityViewController(activityItems: [viewModel.shareMessage], applicationActivities: nil)
-        present(activityViewController, animated: true, completion: nil)
+        FeedbackManager.triggerImpactFeedback(of: .light)
+        SoundEffectManager.shared.play(sound: .select)
+        present(activityViewController, animated: true)
     }
 }
 
@@ -249,6 +267,8 @@ extension ResultsViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.deselectRow(at: indexPath, animated: true)
         let userAnswer = viewModel.userAnswer(at: indexPath.row)
         let questionDetailViewController = QuestionDetailViewController(userAnswer: userAnswer)
+        FeedbackManager.triggerImpactFeedback(of: .light)
+        SoundEffectManager.shared.play(sound: .select)
         navigationController?.pushViewController(questionDetailViewController, animated: true)
     }
 }

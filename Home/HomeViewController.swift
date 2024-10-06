@@ -140,12 +140,15 @@ class HomeViewController: UIViewController {
         let quizConfiguratorViewController = QuizConfiguratorViewController(viewModel: quizConfiguratorViewModel)
         
         FeedbackManager.triggerImpactFeedback(of: .light)
-        SoundEffectManager.shared.playSound(.select)
+        SoundEffectManager.shared.play(sound: .select)
         navigationController?.pushViewController(quizConfiguratorViewController, animated: true)
     }
     
     @objc private func settingsTapped() {
         let settingsViewController = SettingsViewController()
+        
+        FeedbackManager.triggerImpactFeedback(of: .light)
+        SoundEffectManager.shared.play(sound: .select)
         navigationController?.pushViewController(settingsViewController, animated: true)
     }
 }

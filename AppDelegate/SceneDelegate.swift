@@ -21,6 +21,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             return
         }
         
+        SettingsManager.shared.loadSettings()
+        
         let homeViewModel = HomeViewModel()
         let homeViewController = HomeViewController(viewModel: homeViewModel)
         let navigationController = UINavigationController(rootViewController: homeViewController)

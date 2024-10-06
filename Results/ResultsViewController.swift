@@ -79,6 +79,7 @@ class ResultsViewController: UIViewController {
         return button
     }()
     
+    private var isScoreRevealed: Bool = false
     private var confettiHostingController: UIHostingController<ConfettiView>?
     
     // MARK: - Initialization
@@ -153,6 +154,9 @@ class ResultsViewController: UIViewController {
     // MARK: - Animations
     
     private func revealScore() {
+        guard !isScoreRevealed else {
+            return
+        }
         if viewModel.shouldShowConfetti {
             showConfetti()
         } else {
@@ -197,7 +201,8 @@ class ResultsViewController: UIViewController {
         } completion: { _ in
             UIView.animate(withDuration: 0.6, delay: 0, options: .curveEaseInOut) { [weak self] in
                 self?.messageLabel.alpha = 1
-            } completion: { _ in
+            } completion: { [weak self] _ in
+                self?.isScoreRevealed = true
                 UIView.animate(withDuration: 0.6, delay: 0, options: .curveEaseInOut) { [weak self] in
                     self?.questionsTableView.alpha = 1
                     self?.playAgainButton.alpha = 1

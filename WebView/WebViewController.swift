@@ -50,6 +50,7 @@ class WebViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupNavigation()
         loadWebPage()
     }
     
@@ -69,6 +70,11 @@ class WebViewController: UIViewController {
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
+    }
+    
+    private func setupNavigation() {
+        navigationController?.interactivePopGestureRecognizer?.delegate = self
+        navigationController?.delegate = self
     }
     
     // MARK: - Load Web Page
@@ -96,5 +102,32 @@ extension WebViewController: WKNavigationDelegate {
         let alert = UIAlertController(title: "Error", message: "Failed to load the page: \(message)", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
+    }
+}
+
+// MARK: - UINavigationControllerDelegate
+
+extension WebViewController: UINavigationControllerDelegate {
+    
+    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+        if viewController == self {
+            navigationController.interactivePopGestureRecognizer?.isEnabled = true
+        }
+    }
+}
+
+// MARK: - UIGestureRecognizerDelegate
+
+extension WebViewController: UIGestureRecognizerDelegate {
+    
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        if webView.canGoBack {
+            UIView.animate(withDuration: 0.3) {
+                self.webView.goBack()
+            }
+            return false
+        } else {
+            return true
+        }
     }
 }

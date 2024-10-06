@@ -13,6 +13,10 @@ class ResultsViewController: UIViewController {
     // MARK: - Properties
     
     private let viewModel: ResultsViewModel
+    private var isScoreRevealed = false
+    private var confettiHostingController: UIHostingController<ConfettiView>?
+    
+    // MARK: - UI Elements
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -34,6 +38,7 @@ class ResultsViewController: UIViewController {
         label.font = UIFont.systemFont(ofSize: 48, weight: .bold)
         label.textAlignment = .center
         label.textColor = .label
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -43,6 +48,7 @@ class ResultsViewController: UIViewController {
         label.textAlignment = .center
         label.textColor = .secondaryLabel
         label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -59,29 +65,27 @@ class ResultsViewController: UIViewController {
     }()
     
     private lazy var playAgainButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Play Again", for: .normal)
-        button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
-        button.backgroundColor = .systemBlue
-        button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 10
+        let button = UIButton(configuration: .filled())
+        button.configuration?.title = "Play Again"
+        button.configuration?.cornerStyle = .large
+        button.configuration?.image = UIImage(systemName: "arrow.counterclockwise")
+        button.configuration?.imagePadding = 8
+        button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(playAgainTapped), for: .touchUpInside)
         return button
     }()
     
     private lazy var shareButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Share Score", for: .normal)
-        button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
-        button.backgroundColor = .systemGreen
-        button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 10
+        let button = UIButton(configuration: .filled())
+        button.configuration?.title = "Share Score"
+        button.configuration?.cornerStyle = .large
+        button.configuration?.image = UIImage(systemName: "square.and.arrow.up")
+        button.configuration?.imagePadding = 8
+        button.configuration?.baseBackgroundColor = .systemGreen
+        button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(shareTapped), for: .touchUpInside)
         return button
     }()
-    
-    private var isScoreRevealed: Bool = false
-    private var confettiHostingController: UIHostingController<ConfettiView>?
     
     // MARK: - Initialization
     
@@ -98,7 +102,7 @@ class ResultsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
+        setupViews()
         configureData()
     }
     
@@ -109,7 +113,7 @@ class ResultsViewController: UIViewController {
     
     // MARK: - UI Setup
     
-    private func setupUI() {
+    private func setupViews() {
         view.backgroundColor = .systemBackground
         navigationItem.hidesBackButton = true
         
@@ -225,7 +229,7 @@ class ResultsViewController: UIViewController {
     
     @objc private func shareTapped() {
         let activityViewController = UIActivityViewController(activityItems: [viewModel.shareMessage], applicationActivities: nil)
-        present(activityViewController, animated: true, completion: nil)
+        present(activityViewController, animated: true)
     }
 }
 

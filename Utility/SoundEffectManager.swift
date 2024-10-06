@@ -14,7 +14,8 @@ final class SoundEffectManager {
     static let shared = SoundEffectManager()
     
     private var audioPlayers: [SoundEffect: [AVAudioPlayer]] = [:]
-    private var volume: Float = 1.0
+    private(set) var isSoundEnabled: Bool = true
+    private(set) var volume: Float = 1.0
     private let maxConcurrentPlayers = 3
     private let audioQueue = DispatchQueue(label: "com.soundEffectManager.audioQueue", attributes: .concurrent)
     
@@ -42,6 +43,9 @@ final class SoundEffectManager {
     
     func playSound(_ sound: SoundEffect) {
         audioQueue.async {
+            guard self.isSoundEnabled else {
+                return
+            }
             if let availablePlayer = self.getAvailablePlayer(for: sound) {
                 availablePlayer.volume = self.volume
                 availablePlayer.play()
@@ -60,6 +64,15 @@ final class SoundEffectManager {
     func stopAllSounds() {
         audioQueue.async {
             self.audioPlayers.values.flatMap { $0 }.forEach { $0.stop() }
+        }
+    }
+    
+    func setSoundEnabled(_ enabled: Bool) {
+        audioQueue.async {
+            self.isSoundEnabled = enabled
+            if !enabled {
+                self.stopAllSounds()
+            }
         }
     }
     
@@ -129,4 +142,3 @@ final class SoundEffectManager {
         }
     }
 }
-

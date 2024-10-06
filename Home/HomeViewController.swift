@@ -146,6 +146,9 @@ class HomeViewController: UIViewController {
     
     @objc private func settingsTapped() {
         let settingsViewController = SettingsViewController()
+        
+        FeedbackManager.triggerImpactFeedback(of: .light)
+        SoundEffectManager.shared.playSound(.select)
         navigationController?.pushViewController(settingsViewController, animated: true)
     }
 }

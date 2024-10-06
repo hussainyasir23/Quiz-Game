@@ -225,14 +225,14 @@ class ResultsViewController: UIViewController {
     
     @objc private func playAgainTapped() {
         FeedbackManager.triggerImpactFeedback(of: .light)
-        SoundEffectManager.shared.playSound(.select)
+        SoundEffectManager.shared.play(sound: .select)
         navigationController?.popToRootViewController(animated: true)
     }
     
     @objc private func shareTapped() {
         let activityViewController = UIActivityViewController(activityItems: [viewModel.shareMessage], applicationActivities: nil)
         FeedbackManager.triggerImpactFeedback(of: .light)
-        SoundEffectManager.shared.playSound(.select)
+        SoundEffectManager.shared.play(sound: .select)
         present(activityViewController, animated: true)
     }
 }
@@ -268,7 +268,7 @@ extension ResultsViewController: UITableViewDelegate, UITableViewDataSource {
         let userAnswer = viewModel.userAnswer(at: indexPath.row)
         let questionDetailViewController = QuestionDetailViewController(userAnswer: userAnswer)
         FeedbackManager.triggerImpactFeedback(of: .light)
-        SoundEffectManager.shared.playSound(.select)
+        SoundEffectManager.shared.play(sound: .select)
         navigationController?.pushViewController(questionDetailViewController, animated: true)
     }
 }

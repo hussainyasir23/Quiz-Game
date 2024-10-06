@@ -86,7 +86,7 @@ class SettingsViewController: UIViewController {
     @objc private func soundSwitchValueChanged() {
         SoundEffectManager.shared.setSoundEnabled(soundSwitch.isOn)
         SettingsManager.shared.saveSetting(soundSwitch.isOn, for: .sound)
-        SoundEffectManager.shared.playSound(.select)
+        SoundEffectManager.shared.play(sound: .select)
         updateVolumeSliderState()
     }
     
@@ -98,7 +98,7 @@ class SettingsViewController: UIViewController {
     @objc private func hapticsSwitchValueChanged() {
         FeedbackManager.setHapticsEnabled(hapticsSwitch.isOn)
         SettingsManager.shared.saveSetting(hapticsSwitch.isOn, for: .haptics)
-        SoundEffectManager.shared.playSound(.select)
+        SoundEffectManager.shared.play(sound: .select)
     }
 }
 

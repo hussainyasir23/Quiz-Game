@@ -302,10 +302,10 @@ class QuizViewController: UIViewController {
         switch gameEffect {
         case .correct:
             FeedbackManager.triggerNotificationFeedback(of: .success)
-            SoundEffectManager.shared.playSound(.correct)
+            SoundEffectManager.shared.play(sound: .correct)
         case .incorrect:
             FeedbackManager.triggerNotificationFeedback(of: .error)
-            SoundEffectManager.shared.playSound(.incorrect)
+            SoundEffectManager.shared.play(sound: .incorrect)
         case .gameOver:
             FeedbackManager.triggerNotificationFeedback(of: .warning)
         case .timerTick:

@@ -9,13 +9,59 @@ import UIKit
 
 class SettingsViewController: UIViewController {
     
-    // MARK: - UI Components
+    // MARK: - Properties
+    
+    private enum SettingSection: Int, CaseIterable {
+        
+        case sound, haptics, information
+        
+        var title: String {
+            switch self {
+            case .sound: return "Sound"
+            case .haptics: return "Haptics"
+            case .information: return "Information"
+            }
+        }
+        
+        var rows: [SettingRow] {
+            switch self {
+            case .sound: return [.inAppSounds, .volume]
+            case .haptics: return [.inAppHaptics]
+            case .information: return [.about, .developer]
+            }
+        }
+    }
+    
+    private enum SettingRow: Equatable {
+        
+        case inAppSounds, volume, inAppHaptics, about, developer
+        
+        var title: String {
+            switch self {
+            case .inAppSounds: return "In-App Sounds"
+            case .volume: return "Volume"
+            case .inAppHaptics: return "In-App Haptics"
+            case .about: return "About"
+            case .developer: return "Developer"
+            }
+        }
+        
+        var isSelectable: Bool {
+            switch self {
+            case .about, .developer: return true
+            default: return false
+            }
+        }
+    }
+    
+    // MARK: - UI Elements
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "SettingCell")
         return tableView
     }()
     
@@ -107,36 +153,73 @@ class SettingsViewController: UIViewController {
 extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return SettingSection.allCases.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? 2 : 1
+        return SettingSection(rawValue: section)?.rows.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return section == 0 ? "Sound" : "Haptics"
+        return SettingSection(rawValue: section)?.title
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: "SettingCell")
-        cell.selectionStyle = .none
-        
-        switch (indexPath.section, indexPath.row) {
-        case (0, 0):
-            cell.textLabel?.text = "In-App Sounds"
+        let cell = tableView.dequeueReusableCell(withIdentifier: "SettingCell", for: indexPath)
+        guard let settingSection = SettingSection(rawValue: indexPath.section) else {
+            return cell
+        }
+        let settingRow = settingSection.rows[indexPath.row]
+        configureCell(cell, for: settingRow)
+        return cell
+    }
+    
+    private func configureCell(_ cell: UITableViewCell, for settingRow: SettingRow) {
+        cell.textLabel?.text = settingRow.title
+        cell.selectionStyle = settingRow.isSelectable ? .default : .none
+        switch settingRow {
+        case .inAppSounds:
             cell.accessoryView = soundSwitch
-        case (0, 1):
-            cell.textLabel?.text = "Volume"
+        case .volume:
             cell.textLabel?.textColor = soundSwitch.isOn ? .label : .secondaryLabel
             cell.accessoryView = volumeSlider
-        case (1, 0):
-            cell.textLabel?.text = "In-App Haptics"
+        case .inAppHaptics:
             cell.accessoryView = hapticsSwitch
-        default:
-            break
+        case .about, .developer:
+            cell.accessoryType = .disclosureIndicator
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let settingSection = SettingSection(rawValue: indexPath.section),
+              settingSection == .information else {
+            return
         }
         
-        return cell
+        let settingRow = settingSection.rows[indexPath.row]
+        handleInformationSelection(for: settingRow)
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    private func handleInformationSelection(for row: SettingRow) {
+        let urlString: String?
+        switch row {
+        case .about:
+            urlString = "https://hussainyasir23.github.io/Quiz-Game/"
+        case .developer:
+            urlString = "https://hussainyasir23.github.io/hussainyasir23/"
+        default:
+            return
+        }
+        
+        guard let urlString = urlString,
+              let url = URL(string: urlString) else {
+            return
+        }
+        
+        let webViewController = WebViewController(url: url)
+        FeedbackManager.triggerImpactFeedback(of: .light)
+        SoundEffectManager.shared.play(sound: .select)
+        navigationController?.pushViewController(webViewController, animated: true)
     }
 }

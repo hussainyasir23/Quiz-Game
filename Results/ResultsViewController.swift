@@ -24,6 +24,7 @@ class ResultsViewController: UIViewController {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.spacing = 24
+        stackView.alignment = .center
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -138,9 +139,13 @@ class ResultsViewController: UIViewController {
             contentView.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.heightAnchor),
             
             questionsTableView.heightAnchor.constraint(greaterThanOrEqualToConstant: 0),
+            questionsTableView.widthAnchor.constraint(equalTo: contentView.widthAnchor),
             
             playAgainButton.heightAnchor.constraint(equalToConstant: 50),
-            shareButton.heightAnchor.constraint(equalToConstant: 50)
+            playAgainButton.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.7),
+            
+            shareButton.heightAnchor.constraint(equalToConstant: 50),
+            shareButton.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.7)
         ])
     }
     

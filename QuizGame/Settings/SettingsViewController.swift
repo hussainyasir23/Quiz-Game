@@ -205,7 +205,7 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
         let urlString: String?
         switch row {
         case .about:
-            urlString = "https://hussainyasir23.github.io/Quiz-Game/"
+            urlString = "https://hussainyasir23.github.io/QuizGame/"
         case .developer:
             urlString = "https://hussainyasir23.github.io/hussainyasir23/"
         default:

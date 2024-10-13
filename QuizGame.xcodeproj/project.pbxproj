@@ -83,7 +83,7 @@
 		548B589A2C8C62170094488B /* ResultsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsViewController.swift; sourceTree = "<group>"; };
 		548B589C2C8C635A0094488B /* HighScoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighScoreManager.swift; sourceTree = "<group>"; };
 		54EA776B2CB14CE9002B7CE4 /* UserAsnwer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAsnwer.swift; sourceTree = "<group>"; };
-		54EBF75E2680AC1600A77A5E /* Quiz Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Quiz Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		54EBF75E2680AC1600A77A5E /* QuizGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QuizGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		54EBF7612680AC1600A77A5E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		54EBF7632680AC1600A77A5E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		54EBF76A2680AC1B00A77A5E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -103,6 +103,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		541A6B0C2CBBA4190080A689 /* QuizGame */ = {
+			isa = PBXGroup;
+			children = (
+				542F7AC82CA8186700F9921E /* Utility */,
+				547CD70B2CB1682900B69458 /* ConfettiView */,
+				542F7ABF2CA7D4FF00F9921E /* OptionSheet */,
+				547CD7192CB29E4200B69458 /* WebView */,
+				542F7AB32CA6F40F00F9921E /* Settings */,
+				547CD7142CB1C56400B69458 /* QuestionDetail */,
+				548B58992C8C61D40094488B /* Results */,
+				548B58942C8C59480094488B /* Quiz */,
+				548B588B2C8C53AC0094488B /* QuizConfigurator */,
+				548B586A2C8C43BA0094488B /* Home */,
+				548B58802C8C4F9B0094488B /* QuizService */,
+				548B587B2C8C4E040094488B /* Models */,
+				542F7AD42CA8448A00F9921E /* Assets */,
+				548B58692C8C43A40094488B /* AppDelegate */,
+			);
+			path = QuizGame;
+			sourceTree = "<group>";
+		};
 		542F7AB32CA6F40F00F9921E /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -252,20 +273,7 @@
 		54EBF7552680AC1600A77A5E = {
 			isa = PBXGroup;
 			children = (
-				542F7AC82CA8186700F9921E /* Utility */,
-				547CD70B2CB1682900B69458 /* ConfettiView */,
-				542F7ABF2CA7D4FF00F9921E /* OptionSheet */,
-				547CD7192CB29E4200B69458 /* WebView */,
-				542F7AB32CA6F40F00F9921E /* Settings */,
-				547CD7142CB1C56400B69458 /* QuestionDetail */,
-				548B58992C8C61D40094488B /* Results */,
-				548B58942C8C59480094488B /* Quiz */,
-				548B588B2C8C53AC0094488B /* QuizConfigurator */,
-				548B586A2C8C43BA0094488B /* Home */,
-				548B58802C8C4F9B0094488B /* QuizService */,
-				548B587B2C8C4E040094488B /* Models */,
-				542F7AD42CA8448A00F9921E /* Assets */,
-				548B58692C8C43A40094488B /* AppDelegate */,
+				541A6B0C2CBBA4190080A689 /* QuizGame */,
 				54EBF75F2680AC1600A77A5E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -273,7 +281,7 @@
 		54EBF75F2680AC1600A77A5E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				54EBF75E2680AC1600A77A5E /* Quiz Game.app */,
+				54EBF75E2680AC1600A77A5E /* QuizGame.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -281,9 +289,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		54EBF75D2680AC1600A77A5E /* Quiz Game */ = {
+		54EBF75D2680AC1600A77A5E /* QuizGame */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 54EBF7722680AC1B00A77A5E /* Build configuration list for PBXNativeTarget "Quiz Game" */;
+			buildConfigurationList = 54EBF7722680AC1B00A77A5E /* Build configuration list for PBXNativeTarget "QuizGame" */;
 			buildPhases = (
 				54EBF75A2680AC1600A77A5E /* Sources */,
 				54EBF75B2680AC1600A77A5E /* Frameworks */,
@@ -293,9 +301,9 @@
 			);
 			dependencies = (
 			);
-			name = "Quiz Game";
+			name = QuizGame;
 			productName = "Quiz Game";
-			productReference = 54EBF75E2680AC1600A77A5E /* Quiz Game.app */;
+			productReference = 54EBF75E2680AC1600A77A5E /* QuizGame.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -312,7 +320,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 54EBF7592680AC1600A77A5E /* Build configuration list for PBXProject "Quiz Game" */;
+			buildConfigurationList = 54EBF7592680AC1600A77A5E /* Build configuration list for PBXProject "QuizGame" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -325,7 +333,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				54EBF75D2680AC1600A77A5E /* Quiz Game */,
+				54EBF75D2680AC1600A77A5E /* QuizGame */,
 			);
 		};
 /* End PBXProject section */
@@ -524,7 +532,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = K883F3UFX3;
-				INFOPLIST_FILE = AppDelegate/Info.plist;
+				INFOPLIST_FILE = QuizGame/AppDelegate/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -543,7 +551,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = K883F3UFX3;
-				INFOPLIST_FILE = AppDelegate/Info.plist;
+				INFOPLIST_FILE = QuizGame/AppDelegate/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -558,7 +566,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		54EBF7592680AC1600A77A5E /* Build configuration list for PBXProject "Quiz Game" */ = {
+		54EBF7592680AC1600A77A5E /* Build configuration list for PBXProject "QuizGame" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				54EBF7702680AC1B00A77A5E /* Debug */,
@@ -567,7 +575,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		54EBF7722680AC1B00A77A5E /* Build configuration list for PBXNativeTarget "Quiz Game" */ = {
+		54EBF7722680AC1B00A77A5E /* Build configuration list for PBXNativeTarget "QuizGame" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				54EBF7732680AC1B00A77A5E /* Debug */,

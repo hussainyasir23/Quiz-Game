@@ -2,6 +2,8 @@
 
 A modern, interactive quiz application built with Swift and UIKit, leveraging the MVVM architecture. This app fetches trivia questions from the Open Trivia Database API and presents them in an engaging, user-friendly interface.
 
+[![Created by Yasir](https://img.shields.io/badge/Created_by-Yasir-blue?style=for-the-badge)](https://hussainyasir23.github.io/hussainyasir23/)
+
 ## Table of Contents
 - [Features](#features)
 - [Technologies Used](#technologies-used)
@@ -10,6 +12,7 @@ A modern, interactive quiz application built with Swift and UIKit, leveraging th
 - [API Integration](#api-integration)
 - [Future Improvements](#future-improvements)
 - [Project Status](#project-status)
+- [About the Developer](#about-the-developer)
 
 ## Features
 
@@ -75,3 +78,13 @@ For more details, visit the [Open Trivia Database API documentation](https://ope
 This project is a personal/learning project and is not currently licensed for distribution or use. The project creator reserves all rights. If you're interested in using or contributing to this project, please reach out to discuss possibilities.
 
 Please note that while this project uses the Open Trivia Database API, it is not affiliated with or endorsed by the API providers. Make sure to comply with their terms of service when using the API.
+
+## About the Developer
+
+This project is created and maintained by [Yasir](https://hussainyasir23.github.io/hussainyasir23/).
+
+Feel free to check out my other projects and get in touch!
+
+[![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/hussainyasir23)
+[![Email](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:hussainyasir23@gmail.com)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/hussainyasir23/)
